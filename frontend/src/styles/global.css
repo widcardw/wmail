@@ -1,0 +1,69 @@
+:root {
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  --color-bg: #1b2026;
+  --color-fg: #fff;
+  --color-mut: #2b3639;
+  --color-primary: #007fff;
+  --color-primary-hover: #3f8fff;
+  --color-primary-fg: #fff;
+  --color-secondary: #4f8fff;
+  --color-secondary-hover: #759fff;
+  --color-secondary-fg: #fff;
+  --color-destructive: #bf4534;
+  --color-destructive-hover: #ef4534;
+  --color-destructive-fg: #fff;
+
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(''),
+    url('./Inter-Medium.ttf') format('truetype');
+}
+
+h3 {
+  font-size: 3em;
+  line-height: 1.1;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #fff;
+    --color-fg: #000;
+    --color-mut: #e0e0e0;
+  }
+}

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=A w-mail application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/w-mail %u
+Terminal=false
+Type=Application
+Icon=w-mail
+Categories=Utility;
+StartupWMClass=w-mail
+
+ 
