@@ -33,6 +33,8 @@ This is a project that uses Go + WailsV3 + Solidjs.
 
 The UI library is `@ark-ui/solid`. Full documents refer to https://ark-ui.com/docs/overview/about or https://ark-ui.com/llms-solid.txt
 
+Icons using unocss, https://icones.js.org/collection/ri with collection `@icones-json/ri`, example `<div class="w-4 h-4 i-ri-home-2-line" />`
+
 ## Backend Service
 
 Wails V3 https://v3alpha.wails.io/
