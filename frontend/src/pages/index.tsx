@@ -1,24 +1,28 @@
-import { Button } from '~/components/ui/button'
-import { toaster } from '~/components/ui/toaster'
+import { onMount } from 'solid-js'
+import { useNavigate } from '@solidjs/router'
+import { mailStore } from '~/stores/mail'
 
-function Home() {
+export default function HomePage() {
+  const navigate = useNavigate()
+
+  onMount(async () => {
+    await mailStore.loadAccounts()
+    
+    if (mailStore.state.accounts.length > 0) {
+      // Set first account as current
+      mailStore.setCurrentAccount(mailStore.state.accounts[0])
+      navigate('/mailbox')
+    } else {
+      navigate('/accounts')
+    }
+  })
+
   return (
-    <>
-      <h1>Home Page</h1>
-      <Button
-        onClick={() => {
-          toaster.create({
-            title: 'Hello',
-            description: 'This is a toast! Write some long text here to make line breaks.',
-            duration: Infinity,
-            type: 'success'
-          })
-        }}
-      >
-        Toast
-      </Button>
-    </>
+    <div class="flex items-center justify-center h-screen">
+      <div class="text-center">
+        <div class="i-ri-loader-4-line w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+        <p class="text-muted-foreground">Loading...</p>
+      </div>
+    </div>
   )
 }
-
-export default Home

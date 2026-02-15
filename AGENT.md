@@ -76,8 +76,29 @@ async function getGreetMsg(name: str) {
 
 ### Get Application Instance in Go Functions
 
+We often use the app instance to invoke global events.
+
 ```go
 import "github.com/wailsapp/wails/v3/pkg/application"
 // ...
 app := application.Get()
+app.Event.Emit("progress:edge", ProgressEvent{
+  finished: i+1,
+  total: len(segments),
+})
+```
+
+In frontend, we can listen the event and update the progress bar.
+
+```ts
+import {Events} from '@wailsio/runtime'
+const cleanupEdgeProgressListener = Events.On('progress:edge', (data: {name: string; data: {total: number; finished: number}}) => {
+  const {total, finished} = data.data
+})
+```
+
+## Dev
+
+```sh
+wails3 dev
 ```
