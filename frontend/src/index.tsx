@@ -23,9 +23,13 @@ render(
     return (
       <Router
         root={(props) => (
-          <Suspense fallback={<div class="flex items-center justify-center h-screen">
-            <div class="i-ri-loader-4-line w-8 h-8 animate-spin text-primary" />
-          </div>}>
+          <Suspense
+            fallback={
+              <div class="flex items-center justify-center h-screen">
+                <div class="i-ri-loader-4-line w-8 h-8 animate-spin text-primary" />
+              </div>
+            }
+          >
             <BaseLayout>{props.children}</BaseLayout>
             <Toaster toaster={toaster}>
               {(toast) => (

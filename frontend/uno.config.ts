@@ -12,6 +12,7 @@ export default defineConfig({
       primary: {
         DEFAULT: 'var(--color-primary)',
         hover: 'var(--color-primary-hover)',
+        hvbg: 'var(--color-primary-hvbg)',
         fg: 'var(--color-primary-fg)',
       },
       secondary: {

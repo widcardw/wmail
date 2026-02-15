@@ -26,15 +26,15 @@ export default function AccountSwitcher() {
             {mailStore.state.currentAccount?.name}
           </span>
         </Show>
-        <div class={`i-ri-arrow-down-s-line w-4 h-4 text-muted-foreground transition-transform ${isOpen() ? 'rotate-180' : ''}`} />
+        <div
+          class={`i-ri-arrow-down-s-line w-4 h-4 text-muted-foreground transition-transform ${isOpen() ? 'rotate-180' : ''}`}
+        />
       </button>
 
       <Show when={isOpen()}>
         <div class="absolute top-full left-0 right-0 mt-1 bg-surface border border-border rounded-lg shadow-lg overflow-hidden z-10">
           <div class="p-2">
-            <div class="px-3 py-1 text-xs font-medium text-muted-foreground mb-1">
-              账户
-            </div>
+            <div class="px-3 py-1 text-xs font-medium text-muted-foreground mb-1">账户</div>
             <For each={mailStore.state.accounts}>
               {(account) => (
                 <button

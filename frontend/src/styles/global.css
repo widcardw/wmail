@@ -17,10 +17,11 @@
   user-select: text;
 
   /* Color variables for UnoCSS */
-  --color-bg: #0f0f11;
+  --color-bg: #1f2227;
   --color-fg: #ffffff;
   --color-mut: #737373;
   --color-primary: #3b82f6;
+  --color-primary-hvbg: #3b82f633;
   --color-primary-hover: #2563eb;
   --color-primary-fg: #ffffff;
   --color-secondary: #6366f1;
@@ -28,16 +29,25 @@
   --color-secondary-fg: #ffffff;
   --color-destructive: #ef4444;
   --color-destructive-hover: #dc2626;
+  --color-destructive-hover-hvbg: #dc262633;
   --color-destructive-fg: #ffffff;
 
-  --color-background: #0f0f11;
-  --color-surface: #18181b;
-  --color-border: #27272a;
+  --color-border: #292934;
   --color-muted-foreground: #a1a1aa;
 
   color: var(--color-fg);
   background-color: var(--color-bg);
   overflow: hidden;
+
+  --popover-z-index: 50;
+}
+
+html.light {
+  --color-bg: #fff;
+  --color-fg: #000;
+  --color-mut: #c0c0c0;
+  --color-border: #e0e0e0;
+  --color-muted-foreground: #333;
 }
 
 @font-face {
@@ -53,14 +63,21 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
 }
 
@@ -75,7 +92,8 @@ button {
   font-family: inherit;
 }
 
-input, textarea {
+input,
+textarea {
   font-family: inherit;
 }
 

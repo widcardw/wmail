@@ -18,6 +18,11 @@ export class Account {
     "smtpHost": string;
     "smtpPort": number;
     "smtpUseSSL": boolean;
+
+    /**
+     * Use SMTP or IMAP
+     */
+    "emailProtocolUse": string;
     "username": string;
 
     /**
@@ -54,6 +59,9 @@ export class Account {
         }
         if (!("smtpUseSSL" in $$source)) {
             this["smtpUseSSL"] = false;
+        }
+        if (!("emailProtocolUse" in $$source)) {
+            this["emailProtocolUse"] = "";
         }
         if (!("username" in $$source)) {
             this["username"] = "";

@@ -18,7 +18,7 @@ export default function MailboxPage() {
 
   const loadFolders = async () => {
     if (!mailStore.state.currentAccount) return
-    
+
     setLoading(true)
     try {
       const result = await MailService.GetFolders(mailStore.state.currentAccount.id)
@@ -31,14 +31,14 @@ export default function MailboxPage() {
 
   const loadEmails = async () => {
     if (!mailStore.state.currentAccount || !selectedFolder()) return
-    
+
     setLoading(true)
     try {
       const result = await MailService.GetEmails(
         mailStore.state.currentAccount.id,
         selectedFolder(),
         1,
-        50
+        50,
       )
       setEmails(result)
     } catch (error) {
@@ -52,7 +52,7 @@ export default function MailboxPage() {
     const now = new Date()
     const diff = now.getTime() - date.getTime()
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
+
     if (days === 0) {
       return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
     } else if (days < 7) {
@@ -150,19 +150,21 @@ export default function MailboxPage() {
                     </div>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center justify-between mb-1">
-                        <span class={`font-semibold truncate ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}>
+                        <span
+                          class={`font-semibold truncate ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}
+                        >
                           {email.from}
                         </span>
                         <span class="text-sm text-muted-foreground flex-shrink-0 ml-2">
                           {formatDate(email.date)}
                         </span>
                       </div>
-                      <h3 class={`text-sm truncate mb-1 ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}>
+                      <h3
+                        class={`text-sm truncate mb-1 ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}
+                      >
                         {email.subject}
                       </h3>
-                      <p class="text-sm text-muted-foreground truncate">
-                        {email.body}
-                      </p>
+                      <p class="text-sm text-muted-foreground truncate">{email.body}</p>
                     </div>
                   </div>
                 </div>

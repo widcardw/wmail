@@ -4,6 +4,7 @@ import clsx from 'clsx'
 const VariantClasses = {
   default: 'bg-primary text-primary-fg hover:bg-primary-hover',
   destructive: 'bg-destructive text-destructive-fg hover:bg-destructive-hover',
+  destructive_icon: 'bg-transparent text-destructive-fg hover:bg-destructive',
   secondary: 'bg-secondary text-secondary-fg hover:bg-secondary-hover',
   ghost: 'bg-transparent text-fg hover:bg-mut hover:bg-opacity-10',
 }
@@ -17,7 +18,7 @@ const SizeClasses = {
 
 const Button: Component<{
   disabled?: boolean
-  variant?: 'default' | 'secondary' | 'destructive' | 'ghost'
+  variant?: 'default' | 'secondary' | 'destructive' | 'ghost' | 'destructive_icon'
   size?: 'default' | 'sm' | 'lg' | 'icon'
   onClick?: (args: unknown) => unknown
   children?: JSXElement

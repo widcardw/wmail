@@ -18,10 +18,7 @@ export default function ComposePage() {
     <div class="p-6 h-screen flex flex-col">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-white">New Message</h1>
-        <button
-          type="button"
-          class="text-muted-foreground hover:text-white transition-colors"
-        >
+        <button type="button" class="text-muted-foreground hover:text-white transition-colors">
           <div class="i-ri-close-line w-6 h-6" />
         </button>
       </div>

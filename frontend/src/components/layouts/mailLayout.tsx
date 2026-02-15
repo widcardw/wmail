@@ -45,9 +45,7 @@ export default function MailLayout(props: MailLayoutProps) {
       </div>
 
       {/* Main Content */}
-      <div class="flex-1 overflow-hidden">
-        {props.children}
-      </div>
+      <div class="flex-1 overflow-hidden">{props.children}</div>
     </div>
   )
 }

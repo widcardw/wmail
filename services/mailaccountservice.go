@@ -10,18 +10,19 @@ import (
 
 // Account represents an email account configuration
 type Account struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	IMAPHost    string `json:"imapHost"`
-	IMAPPort    int    `json:"imapPort"`
-	IMAPUseSSL  bool   `json:"imapUseSSL"`
-	SMTPHost    string `json:"smtpHost"`
-	SMTPPort    int    `json:"smtpPort"`
-	SMTPUseSSL  bool   `json:"smtpUseSSL"`
-	Username    string `json:"username"`
-	Password    string `json:"password"` // In production, this should be encrypted
-	CreatedAt   string `json:"createdAt"`
+	ID               string `json:"id"`
+	Name             string `json:"name"`
+	Email            string `json:"email"`
+	IMAPHost         string `json:"imapHost"`
+	IMAPPort         int    `json:"imapPort"`
+	IMAPUseSSL       bool   `json:"imapUseSSL"`
+	SMTPHost         string `json:"smtpHost"`
+	SMTPPort         int    `json:"smtpPort"`
+	SMTPUseSSL       bool   `json:"smtpUseSSL"`
+	EmailProtocolUse string `json:"emailProtocolUse"` // Use SMTP or IMAP
+	Username         string `json:"username"`
+	Password         string `json:"password"` // In production, this should be encrypted
+	CreatedAt        string `json:"createdAt"`
 }
 
 // MailAccountService manages email accounts
@@ -37,17 +38,17 @@ func NewMailAccountService() *MailAccountService {
 	if err != nil {
 		configDir = os.TempDir()
 	}
-	
+
 	appDir := filepath.Join(configDir, "wmail")
 	os.MkdirAll(appDir, 0755)
-	
+
 	accountsPath := filepath.Join(appDir, "accounts.json")
-	
+
 	s := &MailAccountService{
 		accounts:     make(map[string]*Account),
 		accountsPath: accountsPath,
 	}
-	
+
 	s.loadAccounts()
 	return s
 }
@@ -56,7 +57,7 @@ func NewMailAccountService() *MailAccountService {
 func (s *MailAccountService) loadAccounts() error {
 	s.accountsMutex.Lock()
 	defer s.accountsMutex.Unlock()
-	
+
 	data, err := os.ReadFile(s.accountsPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -64,16 +65,16 @@ func (s *MailAccountService) loadAccounts() error {
 		}
 		return err
 	}
-	
+
 	var accounts []*Account
 	if err := json.Unmarshal(data, &accounts); err != nil {
 		return err
 	}
-	
+
 	for _, acc := range accounts {
 		s.accounts[acc.ID] = acc
 	}
-	
+
 	return nil
 }
 
@@ -81,17 +82,17 @@ func (s *MailAccountService) loadAccounts() error {
 func (s *MailAccountService) saveAccounts() error {
 	s.accountsMutex.RLock()
 	defer s.accountsMutex.RUnlock()
-	
+
 	accounts := make([]*Account, 0, len(s.accounts))
 	for _, acc := range s.accounts {
 		accounts = append(accounts, acc)
 	}
-	
+
 	data, err := json.MarshalIndent(accounts, "", "  ")
 	if err != nil {
 		return err
 	}
-	
+
 	return os.WriteFile(s.accountsPath, data, 0600)
 }
 
@@ -99,7 +100,7 @@ func (s *MailAccountService) saveAccounts() error {
 func (s *MailAccountService) GetAccounts() []*Account {
 	s.accountsMutex.RLock()
 	defer s.accountsMutex.RUnlock()
-	
+
 	accounts := make([]*Account, 0, len(s.accounts))
 	for _, acc := range s.accounts {
 		accounts = append(accounts, acc)
@@ -111,7 +112,7 @@ func (s *MailAccountService) GetAccounts() []*Account {
 func (s *MailAccountService) GetAccount(id string) (*Account, error) {
 	s.accountsMutex.RLock()
 	defer s.accountsMutex.RUnlock()
-	
+
 	acc, exists := s.accounts[id]
 	if !exists {
 		return nil, fmt.Errorf("account not found")
@@ -127,15 +128,15 @@ func (s *MailAccountService) AddAccount(account *Account) (*Account, error) {
 	if account.CreatedAt == "" {
 		account.CreatedAt = getCurrentTime()
 	}
-	
+
 	s.accountsMutex.Lock()
 	s.accounts[account.ID] = account
 	s.accountsMutex.Unlock()
-	
+
 	if err := s.saveAccounts(); err != nil {
 		return nil, err
 	}
-	
+
 	return account, nil
 }
 
@@ -143,13 +144,13 @@ func (s *MailAccountService) AddAccount(account *Account) (*Account, error) {
 func (s *MailAccountService) UpdateAccount(account *Account) error {
 	s.accountsMutex.Lock()
 	defer s.accountsMutex.Unlock()
-	
+
 	if _, exists := s.accounts[account.ID]; !exists {
 		return fmt.Errorf("account not found")
 	}
-	
+
 	s.accounts[account.ID] = account
-	
+
 	return s.saveAccounts()
 }
 
@@ -157,11 +158,11 @@ func (s *MailAccountService) UpdateAccount(account *Account) error {
 func (s *MailAccountService) DeleteAccount(id string) error {
 	s.accountsMutex.Lock()
 	defer s.accountsMutex.Unlock()
-	
+
 	if _, exists := s.accounts[id]; !exists {
 		return fmt.Errorf("account not found")
 	}
-	
+
 	delete(s.accounts, id)
 	return s.saveAccounts()
 }

@@ -25,7 +25,7 @@ export const mailStore = {
     setMailState({ loading: true, error: null })
     try {
       const accounts = await MailAccountService.GetAccounts()
-      setMailState({ accounts, loading: false })
+      setMailState({ accounts: accounts.filter((i) => i !== null), loading: false })
     } catch (error) {
       setMailState({ error: String(error), loading: false })
     }
@@ -39,7 +39,7 @@ export const mailStore = {
         id: '',
         createdAt: new Date().toISOString(),
       })
-      setMailState(state => ({
+      setMailState((state) => ({
         accounts: [...state.accounts, newAccount],
         loading: false,
       }))
@@ -54,8 +54,8 @@ export const mailStore = {
     setMailState({ loading: true, error: null })
     try {
       await MailAccountService.UpdateAccount(account)
-      setMailState(state => ({
-        accounts: state.accounts.map(a => a.id === account.id ? account : a),
+      setMailState((state) => ({
+        accounts: state.accounts.map((a) => (a.id === account.id ? account : a)),
         loading: false,
       }))
     } catch (error) {
@@ -68,8 +68,8 @@ export const mailStore = {
     setMailState({ loading: true, error: null })
     try {
       await MailAccountService.DeleteAccount(accountId)
-      setMailState(state => ({
-        accounts: state.accounts.filter(a => a.id !== accountId),
+      setMailState((state) => ({
+        accounts: state.accounts.filter((a) => a.id !== accountId),
         currentAccount: state.currentAccount?.id === accountId ? null : state.currentAccount,
         loading: false,
       }))
