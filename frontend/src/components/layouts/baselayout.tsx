@@ -14,29 +14,29 @@ const BaseLayout: Component<{ children: JSXElement }> = (props) => {
   const hasAccount = createMemo(() => mailStore.state.accounts.length > 0);
 
   const buttons = createMemo(() => [
-    { title: "Home", href: "/", icon: "ri-home-2-line", condition: true },
+    { title: "Home", href: "/", icon: "i-ri-home-2-line", condition: true },
     {
       title: "Accounts",
       href: "/accounts",
-      icon: "ri-account-circle-line",
+      icon: "i-ri-account-circle-line",
       condition: true,
     },
     {
       title: "Mailbox",
       href: "/mailbox2",
-      icon: "ri-mail-line",
+      icon: "i-ri-mail-line",
       condition: hasAccount(),
     },
     {
       title: "Compose",
       href: "/compose",
-      icon: "ri-pen-nib-fill",
+      icon: "i-ri-pen-nib-fill",
       condition: hasAccount(),
     },
     {
       title: "Settings",
       href: "/settings",
-      icon: "ri-settings-2-line",
+      icon: "i-ri-settings-2-line",
       condition: true,
     },
   ]);
@@ -58,7 +58,7 @@ const BaseLayout: Component<{ children: JSXElement }> = (props) => {
               >
                 <Tooltip.Trigger class="p-0">
                   <A href={b.href} title={b.title} class={styles.Link}>
-                    <div class={clsx("w-5 h-5", `i-${b.icon}`)} />
+                    <div class={clsx("w-5 h-5", b.icon)} />
                   </A>
                 </Tooltip.Trigger>
                 <Portal>

@@ -19,7 +19,6 @@ type Account struct {
 	SMTPHost         string `json:"smtpHost"`
 	SMTPPort         int    `json:"smtpPort"`
 	SMTPUseSSL       bool   `json:"smtpUseSSL"`
-	EmailProtocolUse string `json:"emailProtocolUse"` // Use SMTP or IMAP
 	Username         string `json:"username"`
 	Password         string `json:"password"` // In production, this should be encrypted
 	CreatedAt        string `json:"createdAt"`

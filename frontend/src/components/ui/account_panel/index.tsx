@@ -16,11 +16,11 @@ interface MailCateCounts {
 }
 
 const folders = [
-  { id: "inbox", name: "Inbox", icon: "ri-inbox-2-line", path: "inbox" },
-  { id: "sent", name: "Sent", icon: "ri-send-plane-line", path: "sent" },
-  { id: "drafts", name: "Drafts", icon: "ri-draft-line", path: "drafts" },
-  { id: "spam", name: "Spam", icon: "ri-spam-2-line", path: "spam" },
-  { id: "trash", name: "Trash", icon: "ri-delete-bin-line", path: "trash" },
+  { id: "inbox", name: "Inbox", icon: "i-ri-inbox-2-line", path: "inbox" },
+  { id: "sent", name: "Sent", icon: "i-ri-send-plane-line", path: "sent" },
+  { id: "drafts", name: "Drafts", icon: "i-ri-draft-line", path: "drafts" },
+  { id: "spam", name: "Spam", icon: "i-ri-spam-2-line", path: "spam" },
+  { id: "trash", name: "Trash", icon: "i-ri-delete-bin-line", path: "trash" },
 ];
 
 const AccountPanel: Component<{
@@ -73,7 +73,7 @@ const AccountPanel: Component<{
                     : "text-text hover:text-primary"
                 }`}
               >
-                <div class={`i-${folder.icon} w-4 h-4`} />
+                <div class={`${folder.icon} w-4 h-4`} />
                 <span>{folder.name}</span>
               </A>
             ))}

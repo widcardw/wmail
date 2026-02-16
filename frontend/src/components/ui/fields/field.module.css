@@ -5,7 +5,7 @@
   align-items: start;
   gap: 0.25rem;
   width: 100%;
-  max-width: 24rem;
+  /*max-width: 24rem;*/
 
   &[data-disabled] {
     opacity: 0.5;
