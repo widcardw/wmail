@@ -35,6 +35,10 @@ The UI library is `@ark-ui/solid`. Full documents refer to https://ark-ui.com/do
 
 Icons using unocss, https://icones.js.org/collection/ri with collection `@icones-json/ri`, example `<div class="w-4 h-4 i-ri-home-2-line" />`
 
+Do not use `border border-border`, this does not work. Instead, use `style={{'border': '1ps solid var(--color-border)'}}`.
+
+Do not use `bg-primary/10` to indicate opacity, use `bg-primary-hvbg`.
+
 ## Backend Service
 
 Wails V3 https://v3alpha.wails.io/

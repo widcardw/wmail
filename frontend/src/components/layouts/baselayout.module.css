@@ -1,7 +1,7 @@
 .Link {
   display: flex;
   justify-content: center;
-  color: var(--color-text);
+  color: var(--color-fg);
   border-radius: 3px;
   padding: 4px;
   user-select: none;
@@ -30,6 +30,6 @@
 }
 
 .Nav {
-  --at-apply: space-y-1 p-2;
+  --at-apply: space-y-1 p-2 flex flex-col;
   border-right: 1px solid var(--color-border);
 }

@@ -1,0 +1,109 @@
+/* DM Sans Font Family */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(''),
+    url('/DMSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  src:
+    local(''),
+    url('/DMSans-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local(''),
+    url('/DMSans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local(''),
+    url('/DMSans-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 500;
+  src:
+    local(''),
+    url('/DMSans-MediumItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 700;
+  src:
+    local(''),
+    url('/DMSans-BoldItalic.ttf') format('truetype');
+}
+
+/* DM Mono Font Family */
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local(''),
+    url('/DMMono-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local(''),
+    url('/DMMono-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-style: normal;
+  font-weight: 500;
+  src:
+    local(''),
+    url('/DMMono-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-style: italic;
+  font-weight: 300;
+  src:
+    local(''),
+    url('/DMMono-LightItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local(''),
+    url('/DMMono-Italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'DM Mono';
+  font-style: italic;
+  font-weight: 500;
+  src:
+    local(''),
+    url('/DMMono-MediumItalic.ttf') format('truetype');
+}

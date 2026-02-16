@@ -55,9 +55,6 @@ func NewMailAccountService() *MailAccountService {
 
 // loadAccounts loads accounts from file
 func (s *MailAccountService) loadAccounts() error {
-	s.accountsMutex.Lock()
-	defer s.accountsMutex.Unlock()
-
 	data, err := os.ReadFile(s.accountsPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -71,6 +68,9 @@ func (s *MailAccountService) loadAccounts() error {
 		return err
 	}
 
+	s.accountsMutex.Lock()
+	defer s.accountsMutex.Unlock()
+
 	for _, acc := range accounts {
 		s.accounts[acc.ID] = acc
 	}
@@ -79,10 +79,8 @@ func (s *MailAccountService) loadAccounts() error {
 }
 
 // saveAccounts saves accounts to file
+// Note: This function does NOT acquire a lock - caller must hold the appropriate lock
 func (s *MailAccountService) saveAccounts() error {
-	s.accountsMutex.RLock()
-	defer s.accountsMutex.RUnlock()
-
 	accounts := make([]*Account, 0, len(s.accounts))
 	for _, acc := range s.accounts {
 		accounts = append(accounts, acc)
@@ -131,9 +129,10 @@ func (s *MailAccountService) AddAccount(account *Account) (*Account, error) {
 
 	s.accountsMutex.Lock()
 	s.accounts[account.ID] = account
+	err := s.saveAccounts()
 	s.accountsMutex.Unlock()
 
-	if err := s.saveAccounts(); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
@@ -163,6 +162,8 @@ func (s *MailAccountService) DeleteAccount(id string) error {
 		return fmt.Errorf("account not found")
 	}
 
+	fmt.Println("Before delete")
 	delete(s.accounts, id)
+	fmt.Println("After delete")
 	return s.saveAccounts()
 }

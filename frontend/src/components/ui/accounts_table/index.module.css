@@ -1,0 +1,24 @@
+.Root {
+    width: 100%;
+}
+
+.Thead {
+    text-align: left;
+    font-weight: 900;
+    background-color: var(--color-border);
+    
+    & th {
+        padding: 4px;
+    }
+}
+
+.Tbody {
+    & :nth-child(even) td {
+        background-color: var(--color-border);
+    }
+    
+    & td {
+        padding: 4px;
+        line-height: 1.25rem;
+    }
+}

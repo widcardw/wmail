@@ -12,13 +12,19 @@ import { onMount, Show } from 'solid-js'
 import toastStyles from './components/ui/toaster/index.module.css'
 import { Toast, Toaster } from '@ark-ui/solid'
 import { toaster } from './components/ui/toaster'
+import { changeTheme, watchThemeIfAuto } from './utils/theme'
+import { configStore } from './stores/app'
 
 import './styles/global.css'
+import mailStore from './stores/mail'
 
 render(
   () => {
     onMount(async () => {
       setGoos(await OsService.GetOs())
+      changeTheme(configStore.theme as 'auto' | 'light' | 'dark')
+      watchThemeIfAuto()
+      mailStore.loadAccounts()
     })
     return (
       <Router

@@ -1,6 +1,7 @@
 import { createStore } from 'solid-js/store'
 import { MailAccountService } from '#/wmail/services'
 import type { Account } from '#/wmail/services'
+import { toaster } from '~/components/ui/toaster'
 
 interface MailState {
   accounts: Account[]
@@ -8,6 +9,7 @@ interface MailState {
   currentFolder: string | null
   loading: boolean
   error: string | null
+  expandedAccounts: Record<string, boolean> // 存储每个账号的展开状态
 }
 
 const [mailState, setMailState] = createStore<MailState>({
@@ -16,6 +18,7 @@ const [mailState, setMailState] = createStore<MailState>({
   currentFolder: null,
   loading: false,
   error: null,
+  expandedAccounts: {},
 })
 
 export const mailStore = {
@@ -38,7 +41,7 @@ export const mailStore = {
         ...account,
         id: '',
         createdAt: new Date().toISOString(),
-      })
+      }) as Account
       setMailState((state) => ({
         accounts: [...state.accounts, newAccount],
         loading: false,
@@ -73,9 +76,11 @@ export const mailStore = {
         currentAccount: state.currentAccount?.id === accountId ? null : state.currentAccount,
         loading: false,
       }))
+      toaster.success({title: 'Deleted an account!'})
     } catch (error) {
       setMailState({ error: String(error), loading: false })
-      throw error
+      toaster.error({title: 'Error occurred!', description: String(error)})
+      // throw error
     }
   },
 
@@ -89,6 +94,14 @@ export const mailStore = {
 
   clearError() {
     setMailState({ error: null })
+  },
+
+  setAccountExpanded(accountId: string, expanded: boolean) {
+    setMailState('expandedAccounts', accountId, expanded)
+  },
+
+  toggleAccountExpanded(accountId: string) {
+    setMailState('expandedAccounts', accountId, (prev) => !prev)
   },
 }
 

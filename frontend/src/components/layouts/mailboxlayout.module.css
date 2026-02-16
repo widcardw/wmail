@@ -1,0 +1,4 @@
+.Nav {
+  --at-apply: space-y-1 p-2;
+  border-right: 1px solid var(--color-border);
+}

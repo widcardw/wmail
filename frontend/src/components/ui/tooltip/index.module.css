@@ -1,0 +1,28 @@
+
+.Content {
+  --arrow-background: var(--color-bg);
+  --arrow-size: 10px;
+  position: relative;
+  background: var(--color-bg);
+  color: var(--fg-inverted);
+  padding-inline: 0.625rem;
+  padding-block: 0.25rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-border);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  box-shadow: var(--color-mut);
+  max-width: 20rem;
+  z-index: calc(var(--popover-z-index) + var(--layer-index, 0));
+  transform-origin: var(--transform-origin);
+
+  /*&[data-state='open'] {
+    animation: scale-fade-in 0.15s ease-out;
+  }*/
+
+  &[data-state='closed'] {
+    /*animation: scale-fade-out 0.1s ease-in;*/
+    display: none;
+  }
+}
