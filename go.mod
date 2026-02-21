@@ -6,6 +6,7 @@ require (
 	github.com/emersion/go-imap v1.2.1
 	github.com/emersion/go-message v0.18.2
 	github.com/google/uuid v1.6.0
+	github.com/mattn/go-sqlite3 v1.14.34
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.70
 )
 

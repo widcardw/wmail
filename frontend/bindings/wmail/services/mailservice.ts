@@ -15,7 +15,7 @@ import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Cr
 import * as $models from "./models.js";
 
 /**
- * GetEmail retrieves a specific email with body
+ * GetEmail retrieves a specific email with body, with cache support
  */
 export function GetEmail(accountID: string, folder: string, uid: number): $CancellablePromise<$models.Email | null> {
     return $Call.ByID(55669524, accountID, folder, uid).then(($result: any) => {
@@ -24,7 +24,7 @@ export function GetEmail(accountID: string, folder: string, uid: number): $Cance
 }
 
 /**
- * GetEmails retrieves emails from a folder
+ * GetEmails retrieves emails from a folder with cache support
  */
 export function GetEmails(accountID: string, folder: string, page: number, pageSize: number): $CancellablePromise<($models.Email | null)[]> {
     return $Call.ByID(2688068389, accountID, folder, page, pageSize).then(($result: any) => {

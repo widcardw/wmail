@@ -1,7 +1,9 @@
 package services
 
 import (
+	"os"
 	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -13,4 +15,13 @@ func generateUUID() string {
 // getCurrentTime returns the current time in RFC3339 format
 func getCurrentTime() string {
 	return time.Now().Format(time.RFC3339)
+}
+
+// getUserConfigDir returns the user config directory
+func getUserConfigDir() (string, error) {
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		configDir = os.TempDir()
+	}
+	return configDir, nil
 }

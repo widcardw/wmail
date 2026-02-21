@@ -1,54 +1,50 @@
-import { For, Show, createSignal, onMount } from 'solid-js'
-import { useParams } from '@solidjs/router'
-import { MailService } from '#/wmail/services'
-import MailBoxLayout from '~/components/layouts/mailboxlayout'
+import { Show, createSignal, onMount } from "solid-js";
+import { useParams } from "@solidjs/router";
+import { Email, MailService } from "#/wmail/services";
+import MailBoxLayout from "~/components/layouts/mailboxlayout";
+import InboxList from "~/components/useful/inboxlist";
+import { Splitter } from "@ark-ui/solid";
 
 export default function InboxPage() {
-  const params = useParams()
-  const [emails, setEmails] = createSignal<any[]>([])
-  const [loading, setLoading] = createSignal(false)
+  const params = useParams();
+  const [emails, setEmails] = createSignal<Email[]>([]);
+  const [loading, setLoading] = createSignal(false);
 
   onMount(async () => {
-    // await loadEmails()
-  })
+    await loadEmails();
+  });
 
   const loadEmails = async () => {
-    if (!params.id) return
-    
-    setLoading(true)
-    try {
-      const result = await MailService.GetEmails(params.id, 'INBOX', 1, 50)
-      setEmails(result.filter(e => e !== null))
-    } catch (error) {
-      console.error('Failed to load emails:', error)
+    console.log("loadEmails called, params.id:", params.id);
+    if (!params.id) {
+      console.warn("No params.id, skipping load");
+      return;
     }
-    setLoading(false)
-  }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
-    if (days === 0) {
-      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-    } else if (days < 7) {
-      return date.toLocaleDateString('en-US', { weekday: 'short' })
-    } else {
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    setLoading(true);
+    try {
+      console.log("Calling GetEmails with:", params.id, "INBOX", 1, 50);
+      const result = await MailService.GetEmails(params.id, "INBOX", 1, 50);
+      console.log("GetEmails result:", result);
+      setEmails(result.filter((e) => e !== null));
+    } catch (error) {
+      console.error("Failed to load emails:", error);
     }
-  }
+    setLoading(false);
+  };
 
   return (
     <MailBoxLayout activeFolder="inbox">
-      <div class="flex-1 flex flex-col">
-        <div class="p-4 flex items-center justify-between" style={{ 'border-bottom': '1px solid var(--color-border)' }}>
-          <h1 class="text-xl font-bold text-white">Inbox</h1>
+      <div class="flex flex-col h-full">
+        <div
+          class="p-4 flex items-center justify-between shrink-0"
+          style={{ "border-bottom": "1px solid var(--color-border)" }}
+        >
+          <h1 class="text-xl font-bold text-text">Inbox</h1>
           <button
             type="button"
             onClick={() => loadEmails()}
-            class="p-2 text-muted-foreground hover:text-white hover:bg-surface rounded transition-colors"
+            class="p-2 text-text"
             title="Refresh"
           >
             <div class="i-ri-refresh-line w-5 h-5" />
@@ -69,37 +65,25 @@ export default function InboxPage() {
                 </div>
               }
             >
-              <div class="flex-1 overflow-y-auto">
-                <For each={emails()}>
-                  {(email) => (
-                    <div class="px-6 py-4 cursor-pointer" style={{ 'border-bottom': '1px solid var(--color-border)' }}>
-                      <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                          <span class="text-primary font-semibold">
-                            {email.from.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                          <div class="flex items-center justify-between mb-1">
-                            <span class={`font-semibold truncate ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}>
-                              {email.from}
-                            </span>
-                            <span class="text-sm text-muted-foreground flex-shrink-0 ml-2">
-                              {formatDate(email.date)}
-                            </span>
-                          </div>
-                          <h3 class={`text-sm truncate mb-1 ${!email.isRead ? 'text-white' : 'text-muted-foreground'}`}>
-                            {email.subject}
-                          </h3>
-                          <p class="text-sm text-muted-foreground truncate">
-                            {email.body}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </For>
-              </div>
+              <Splitter.Root
+                class="flex w-full h-screen"
+                panels={[{ id: "l" }, { id: "b" }]}
+              >
+                <Splitter.Panel id="l" class="min-w-24">
+                  <InboxList emails={emails()} />
+                </Splitter.Panel>
+                <Splitter.ResizeTrigger
+                  class="px-1"
+                  style={{ "border-left": "1px solid var(--color-border)" }}
+                  id="account:mailbox"
+                  aria-label="Resize"
+                >
+                  <Splitter.ResizeTriggerIndicator />
+                </Splitter.ResizeTrigger>
+                <Splitter.Panel id="b">
+                  Email body
+                </Splitter.Panel>
+              </Splitter.Root>
             </Show>
           }
         >
@@ -112,5 +96,5 @@ export default function InboxPage() {
         </Show>
       </div>
     </MailBoxLayout>
-  )
+  );
 }

@@ -82,7 +82,7 @@
   background-color: var(--color-mut);
 
   [data-orientation='horizontal'] & {
-    width: unset;
+    /*width: unset;*/
     height: 100%;
   }
 }
