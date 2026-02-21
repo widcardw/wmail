@@ -1,12 +1,14 @@
-import { Component, JSXElement, onMount } from "solid-js";
+import { Component, For, JSXElement, onMount } from "solid-js";
 import mailStore from "~/stores/mail";
 import { AccountPanel } from "../ui/account_panel";
 import scrollStyles from "~/components/ui/scroll_area/index.module.css";
 import { ScrollArea, Splitter } from "@ark-ui/solid";
 import clsx from "clsx";
 import { useParams } from "@solidjs/router";
+import splitterStyles from "~/components/ui/splitter/index.module.css";
 
 const MailBoxLayout: Component<{
+  inbox: JSXElement;
   children: JSXElement;
   activeFolder?: string;
 }> = (props) => {
@@ -22,25 +24,30 @@ const MailBoxLayout: Component<{
   return (
     <div class="flex flex-col h-screen overflow-hidden">
       <Splitter.Root
-        class="flex h-screen"
-        panels={[{ id: "account" }, { id: "mailbox" }]}
-        defaultSize={[1, 3]}
+        class={clsx(splitterStyles.Root, "flex h-screen")}
+        panels={[
+          { id: "account", minSize: 10 },
+          { id: "inboxlist", minSize: 10 },
+          { id: "mailbody", minSize: 30 },
+        ]}
+        defaultSize={[15, 20, 65]}
       >
         {/* 左侧 - 账户列表 */}
-        <Splitter.Panel id="account" class="min-w-24">
-          <ScrollArea.Root class={scrollStyles.Root}>
+        <Splitter.Panel id="account" class={splitterStyles.Panel}>
+          <ScrollArea.Root class={clsx(scrollStyles.Root, "w-full")} style={{'height': 'calc(100% - 40px)'}}>
             <ScrollArea.Viewport class={scrollStyles.Viewport}>
               <ScrollArea.Content
                 class={clsx(scrollStyles.Content, "p-2 h-full")}
-                // style={{ "border-right": "1px solid var(--color-border)" }}
               >
                 <div class="flex flex-col gap-2">
-                  {mailStore.state.accounts.map((account) => (
-                    <AccountPanel
-                      account={account}
-                      activeFolder={props.activeFolder}
-                    />
-                  ))}
+                  <For each={mailStore.state.accounts}>
+                    {(account) => (
+                      <AccountPanel
+                        account={account}
+                        activeFolder={props.activeFolder}
+                      />
+                    )}
+                  </For>
                 </div>
               </ScrollArea.Content>
             </ScrollArea.Viewport>
@@ -51,17 +58,36 @@ const MailBoxLayout: Component<{
           </ScrollArea.Root>
         </Splitter.Panel>
         <Splitter.ResizeTrigger
-          class="px-1"
-          style={{ "border-right": "1px solid var(--color-border)" }}
-          id="account:mailbox"
+          class={splitterStyles.ResizeTrigger}
+          id="account:inboxlist"
           aria-label="Resize"
         >
-          <Splitter.ResizeTriggerIndicator />
+          <Splitter.ResizeTriggerIndicator
+            class={splitterStyles.ResizeTriggerIndicator}
+          />
         </Splitter.ResizeTrigger>
 
         <Splitter.Panel
-          id="mailbox"
-          class="flex flex-col h-full overflow-hidden"
+          id="inboxlist"
+          class={clsx(splitterStyles.Panel, "w-full")}
+        >
+          {/*{props.children}*/}
+          {props.inbox}
+        </Splitter.Panel>
+
+        <Splitter.ResizeTrigger
+          class={splitterStyles.ResizeTrigger}
+          id="inboxlist:mailbody"
+          aria-label="Resize"
+        >
+          <Splitter.ResizeTriggerIndicator
+            class={splitterStyles.ResizeTriggerIndicator}
+          />
+        </Splitter.ResizeTrigger>
+
+        <Splitter.Panel
+          id="mailbody"
+          class={clsx(splitterStyles.Panel, "w-full")}
         >
           {props.children}
         </Splitter.Panel>
