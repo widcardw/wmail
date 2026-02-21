@@ -25,9 +25,10 @@ export function GetEmail(accountID: string, folder: string, uid: number): $Cance
 
 /**
  * GetEmails retrieves emails from a folder with cache support
+ * forceRefresh: if true, bypass cache and fetch from server
  */
-export function GetEmails(accountID: string, folder: string, page: number, pageSize: number): $CancellablePromise<($models.Email | null)[]> {
-    return $Call.ByID(2688068389, accountID, folder, page, pageSize).then(($result: any) => {
+export function GetEmails(accountID: string, folder: string, page: number, pageSize: number, ...forceRefresh: boolean[]): $CancellablePromise<($models.Email | null)[]> {
+    return $Call.ByID(2688068389, accountID, folder, page, pageSize, forceRefresh).then(($result: any) => {
         return $$createType2($result);
     });
 }

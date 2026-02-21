@@ -6,6 +6,7 @@ import { ScrollArea, Splitter } from "@ark-ui/solid";
 import clsx from "clsx";
 import { useParams } from "@solidjs/router";
 import splitterStyles from "~/components/ui/splitter/index.module.css";
+import mailboxlayoutStyles from "./mailboxlayout.module.css";
 
 const MailBoxLayout: Component<{
   inbox: JSXElement;
@@ -89,7 +90,19 @@ const MailBoxLayout: Component<{
           id="mailbody"
           class={clsx(splitterStyles.Panel, "w-full")}
         >
-          {props.children}
+          <ScrollArea.Root class={clsx(scrollStyles.Root, "w-full", mailboxlayoutStyles.ScrollMailBody)}>
+            <ScrollArea.Viewport class={scrollStyles.Viewport}>
+              <ScrollArea.Content
+                class={clsx(scrollStyles.Content, "p-2 h-full")}
+              >
+                {props.children}
+              </ScrollArea.Content>
+            </ScrollArea.Viewport>
+            <ScrollArea.Scrollbar class={scrollStyles.Scrollbar}>
+              <ScrollArea.Thumb class={scrollStyles.Thumb} />
+            </ScrollArea.Scrollbar>
+            <ScrollArea.Corner class={scrollStyles.Corner} />
+          </ScrollArea.Root>
         </Splitter.Panel>
       </Splitter.Root>
     </div>

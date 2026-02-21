@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	"io"
@@ -110,11 +111,14 @@ func (s *MailService) GetFolders(accountID string) ([]*Folder, error) {
 }
 
 // GetEmails retrieves emails from a folder with cache support
-func (s *MailService) GetEmails(accountID, folder string, page, pageSize int) ([]*Email, error) {
+// forceRefresh: if true, bypass cache and fetch from server
+func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, forceRefresh ...bool) ([]*Email, error) {
 	fmt.Printf("[GetEmails] Called with accountID=%s, folder=%s, page=%d, pageSize=%d\n", accountID, folder, page, pageSize)
 
-	// Try to get from cache first
-	if s.cache != nil {
+	shouldRefresh := len(forceRefresh) > 0 && forceRefresh[0]
+
+	// Try to get from cache first (unless force refresh is requested)
+	if !shouldRefresh && s.cache != nil {
 		cachedCount, err := s.cache.GetCachedCount(accountID, folder)
 		if err == nil && cachedCount > 0 {
 			fmt.Printf("[GetEmails] Found %d cached emails, returning from cache\n", cachedCount)
@@ -280,25 +284,20 @@ func (s *MailService) GetEmail(accountID, folder string, uid uint32) (*Email, er
 		return nil, err
 	}
 
-	// Get message sequence set
+	// Get message sequence set using UID
 	seqset := new(imap.SeqSet)
 	seqset.AddNum(uid)
 
-	// Get message body - fetch the first part (typically the plain text body)
-	section := &imap.BodySectionName{
-		BodyPartName: imap.BodyPartName{
-			Path:      []int{1},
-			Specifier: imap.EntireSpecifier,
-		},
-	}
+	// Fetch the entire RFC822 message and parse it properly
 	items := []imap.FetchItem{
 		imap.FetchEnvelope,
 		imap.FetchUid,
-		section.FetchItem(),
+		imap.FetchRFC822,
 	}
 
 	messages := make(chan *imap.Message, 1)
-	if err := c.Fetch(seqset, items, messages); err != nil {
+	if err := c.UidFetch(seqset, items, messages); err != nil {
+		fmt.Printf("[GetEmail] UID Fetch error: %v\n", err)
 		return nil, err
 	}
 
@@ -307,35 +306,60 @@ func (s *MailService) GetEmail(accountID, folder string, uid uint32) (*Email, er
 		return nil, fmt.Errorf("message not found")
 	}
 
-	// Parse message
-	r := msg.GetBody(section)
+	// Get the full RFC822 message
+	r := msg.GetBody(&imap.BodySectionName{BodyPartName: imap.BodyPartName{}})
 	if r == nil {
 		return nil, fmt.Errorf("no body found")
 	}
 
-	mr, err := mail.CreateReader(r)
+	var fullMessage bytes.Buffer
+	if _, err := io.Copy(&fullMessage, r); err != nil {
+		return nil, fmt.Errorf("failed to read message: %w", err)
+	}
+
+	// Parse the message
+	mr, err := mail.CreateReader(&fullMessage)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create mail reader: %w", err)
 	}
 
 	var body strings.Builder
 
+	// Iterate through parts to find text content
 	for {
 		p, err := mr.NextPart()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			return nil, err
+			fmt.Printf("[GetEmail] Error reading part: %v, continuing...\n", err)
+			continue
 		}
 
-		switch p.Header.(type) {
-		case *mail.InlineHeader:
+		// Get content type from header using Get method
+		contentType := p.Header.Get("Content-Type")
+		fmt.Printf("[GetEmail] Found part with Content-Type: %s\n", contentType)
+
+		// Parse content type (format: "text/plain; charset=utf-8" or similar)
+		mediaType := strings.ToLower(strings.Split(contentType, ";")[0])
+		mediaType = strings.TrimSpace(mediaType)
+
+		// Check if this is a text/plain or text/html part
+		if mediaType == "text/plain" || mediaType == "text/html" {
 			if _, err := io.Copy(&body, p.Body); err != nil {
-				return nil, err
+				fmt.Printf("[GetEmail] Error copying body: %v\n", err)
+				continue
+			}
+			// For plain text, we can stop here
+			if mediaType == "text/plain" {
+				break
 			}
 		}
 	}
+
+	// Clean up the body content
+	bodyText := strings.TrimSpace(body.String())
+	bodyText = strings.ReplaceAll(bodyText, "\r\n", "\n")
 
 	email := &Email{
 		ID:        generateUUID(),
@@ -347,12 +371,12 @@ func (s *MailService) GetEmail(accountID, folder string, uid uint32) (*Email, er
 		CC:        formatAddressList(msg.Envelope.Cc),
 		Subject:   msg.Envelope.Subject,
 		Date:      msg.Envelope.Date.Format(time.RFC3339),
-		Body:      body.String(),
+		Body:      bodyText,
 		IsRead:    true,
 		CreatedAt: getCurrentTime(),
 	}
 
-	fmt.Printf("[GetEmail] Got Email %s from server\n", email.ID)
+	fmt.Printf("[GetEmail] Got Email %s from server, body length: %d\n", email.ID, len(bodyText))
 
 	// Update cache with body
 	if s.cache != nil {
