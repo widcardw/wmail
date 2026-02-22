@@ -28,8 +28,10 @@ export default function InboxPage() {
     try {
       console.log("Calling GetEmails with:", params.id, "INBOX", 1, 50, forceRefresh);
       const result = await MailService.GetEmails(params.id, "INBOX", 1, 50, forceRefresh);
-      console.log("GetEmails result:", result);
+      console.log("GetEmails result length:", result?.length);
+      console.log("GetEmails result sample:", result?.[0]);
       setEmails(result.filter((e) => e !== null));
+      console.log("emails signal after set:", emails());
     } catch (error) {
       console.error("Failed to load emails:", error);
     }

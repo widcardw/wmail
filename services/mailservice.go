@@ -112,18 +112,20 @@ func (s *MailService) GetFolders(accountID string) ([]*Folder, error) {
 
 // GetEmails retrieves emails from a folder with cache support
 // forceRefresh: if true, bypass cache and fetch from server
-func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, forceRefresh ...bool) ([]*Email, error) {
-	fmt.Printf("[GetEmails] Called with accountID=%s, folder=%s, page=%d, pageSize=%d\n", accountID, folder, page, pageSize)
+func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, forceRefresh bool) ([]*Email, error) {
+	fmt.Printf("[GetEmails] ENTRY - accountID=%s, folder=%s, page=%d, pageSize=%d, forceRefresh=%t\n", accountID, folder, page, pageSize, forceRefresh)
 
-	shouldRefresh := len(forceRefresh) > 0 && forceRefresh[0]
+	shouldRefresh := forceRefresh
 
 	// Try to get from cache first (unless force refresh is requested)
 	if !shouldRefresh && s.cache != nil {
+		fmt.Printf("[GetEmails] Checking cache...\n")
 		cachedCount, err := s.cache.GetCachedCount(accountID, folder)
 		if err == nil && cachedCount > 0 {
 			fmt.Printf("[GetEmails] Found %d cached emails, returning from cache\n", cachedCount)
 			return s.cache.GetCachedEmails(accountID, folder, page, pageSize)
 		}
+		fmt.Printf("[GetEmails] No cached emails found (count=%d, err=%v)\n", cachedCount, err)
 	}
 
 	account, err := s.accountService.GetAccount(accountID)
@@ -159,58 +161,69 @@ func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, fo
 	// Calculate message range for pagination
 	from := uint32(1)
 	to := mbox.Messages
-	if pageSize > 0 {
-		if page > 0 {
-			// Pagination: calculate start and end for reverse chronological order
-			start := mbox.Messages - uint32((page-1)*pageSize)
-			end := start - uint32(pageSize) + 1
+	fmt.Printf("[GetEmails] Initial range: from=%d, to=%d\n", from, to)
+	fmt.Printf("[GetEmails] Pagination params: page=%d, pageSize=%d\n", page, pageSize)
+	if pageSize > 0 && page > 0 {
+		// Pagination: calculate start and end for reverse chronological order
+		offset := uint32((page - 1) * pageSize)
+		start := mbox.Messages - offset
 
-			// Boundary checks
-			if start < 1 {
-				start = 1
-			}
-			if end < 1 {
-				end = 1
-			}
-			if start > mbox.Messages {
-				start = mbox.Messages
-			}
-
-			from = end
-			to = start
-		} else {
-			// No pagination specified, limit to pageSize
-			limit := uint32(pageSize)
-			if limit > mbox.Messages {
-				limit = mbox.Messages
-			}
-			to = limit
+		// Calculate end using int to avoid uint32 overflow
+		endInt := int(start) - pageSize + 1
+		if endInt < 1 {
+			endInt = 1
 		}
+		end := uint32(endInt)
+
+		fmt.Printf("[GetEmails] Calculated start=%d, end=%d\n", start, end)
+
+		// Also make sure start doesn't go above the total messages
+		if start > mbox.Messages {
+			start = mbox.Messages
+		}
+
+		// If after boundary checks, end > start, set end to 1
+		if end > start {
+			end = 1
+		}
+
+		from = end
+		to = start
+		fmt.Printf("[GetEmails] Final pagination range: from=%d, to=%d\n", from, to)
 	}
 
 	// Ensure from <= to
+	fmt.Printf("[GetEmails] Final range: from=%d, to=%d\n", from, to)
 	if from > to {
+		fmt.Printf("[GetEmails] ERROR: from > to, returning empty array\n")
 		return []*Email{}, nil
 	}
 
 	// Get message sequence set
 	seqset := new(imap.SeqSet)
 	seqset.AddRange(from, to)
+	fmt.Printf("[GetEmails] Fetching range: %d to %d\n", from, to)
 
 	// Get messages
 	messages := make(chan *imap.Message, pageSize)
 	done := make(chan error, 1)
 
 	go func() {
-		done <- c.Fetch(seqset, []imap.FetchItem{
+		fetchErr := c.Fetch(seqset, []imap.FetchItem{
 			imap.FetchEnvelope,
 			imap.FetchUid,
 		}, messages)
+		fmt.Printf("[GetEmails] Fetch goroutine completed, err: %v\n", fetchErr)
+		done <- fetchErr
 	}()
 
 	var emails []*Email
+	fmt.Printf("[GetEmails] Starting to receive messages...\n")
+	count := 0
 
 	for msg := range messages {
+		count++
+		fmt.Printf("[GetEmails] Received message %d, UID: %d, Subject: %s\n", count, msg.Uid, msg.Envelope.Subject)
 		email := &Email{
 			ID:        generateUUID(),
 			AccountID: accountID,

@@ -22,7 +22,7 @@ const MailAbstract: Component<{ email: Email; selected: boolean; onClick: (v: an
       <div
         class={clsx(
           "text-sm text-mut-foreground leading-tight",
-          "h-2rem whitespace-break-spaces of-y-hidden",
+          "h-2rem whitespace-pre-wrap overflow-y-hidden",
         )}
       >
         {props.email.subject}
