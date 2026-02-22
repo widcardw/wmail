@@ -1,10 +1,10 @@
 .Root {
-    --splitter-border-color: var(--color-border);
-      --splitter-thumb-color: var(--color-mut);
-      --splitter-thumb-size: 0.5rem;
-      --splitter-thumb-inset: calc(var(--splitter-thumb-size) * -0.5);
-      --splitter-border-size: 1px;
-      --splitter-handle-size: 1.5rem;
+  --splitter-border-color: var(--color-border);
+  --splitter-thumb-color: var(--color-mut);
+  --splitter-thumb-size: 0.5rem;
+  --splitter-thumb-inset: calc(var(--splitter-thumb-size) * -0.5);
+  --splitter-border-size: 1px;
+  --splitter-handle-size: 1.5rem;
 }
 
 .Panel {

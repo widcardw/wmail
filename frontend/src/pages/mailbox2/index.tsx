@@ -7,7 +7,7 @@ export default function Mailbox2Page() {
   const accounts = () => mailStore.state.accounts;
 
   return (
-    <MailBoxLayout>
+    <MailBoxLayout inbox="Not Selected">
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center">
           <div class="i-ri-mail-open-line w-20 h-20 text-muted-foreground mx-auto mb-4" />

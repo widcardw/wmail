@@ -1,0 +1,17 @@
+.ql-toolbar.ql-snow {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    height: 3rem;
+}
+
+.ql-container.ql-snow {
+    border: none;
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}

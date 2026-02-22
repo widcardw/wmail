@@ -1,124 +1,129 @@
-import { createSignal } from 'solid-js'
+import { ScrollArea, Splitter } from '@ark-ui/solid'
+import clsx from 'clsx';
+import { createSignal, For, onMount } from 'solid-js'
+import splitterStyles from "~/components/ui/splitter/index.module.css";
+import scrollStyles from "~/components/ui/scroll_area/index.module.css";
+import { formatDate } from '~/utils/date';
+
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+import '~/components/ui/editor/editor.css'
+
+interface Note {
+  title: string
+  content: string
+  createAt: string
+  updateAt: string
+}
+
+interface NoteFolder {
+  name: string
+  notes: Note[]
+}
 
 export default function ComposePage() {
-  const [formData, setFormData] = createSignal({
-    to: '',
-    cc: '',
-    bcc: '',
-    subject: '',
-    body: '',
+
+  const [noteFolders, setNoteFolders] = createSignal<NoteFolder[]>([])
+
+  const [currentFolder, setCurrentFolder] = createSignal<NoteFolder | null>()
+
+  const [currentNote, setCurrentNote] = createSignal<Note | null>(null)
+
+  const [editor, setEditor] = createSignal<HTMLElement>()
+
+  let quillEditor: Quill | null = null
+
+  onMount(() => {
+    quillEditor = new Quill(editor()!, {
+      debug: 'info',
+      modules: {
+        toolbar: true,
+      },
+      placeholder: 'Compose an epic...',
+      theme: 'snow',
+    })
   })
 
-  const handleSend = async () => {
-    // TODO: Implement email sending
-    console.log('Sending email:', formData())
-  }
-
   return (
-    <div class="p-6 h-screen flex flex-col">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-white">New Message</h1>
-        <button type="button" class="text-muted-foreground hover:text-white transition-colors">
-          <div class="i-ri-close-line w-6 h-6" />
-        </button>
-      </div>
+    <Splitter.Root class={clsx(splitterStyles.Root, "flex h-screen")} panels={[{ id: 'f', minSize: 10 }, { id: 'n', minSize: 10 }, { id: 'c', minSize: 20 }]} defaultSize={[15, 15, 70]}>
+      <Splitter.Panel id="f" class={clsx(splitterStyles.Panel, "w-full")}>
+        <div class="h-3rem p-4 font-700 flex items-center" style={{ 'border-bottom': '1px solid var(--color-border)' }}>Folders</div>
+        <ScrollArea.Root class={clsx(scrollStyles.Root, "w-full")} style={{ 'height': 'calc(100% - 40px - 3rem)' }}>
+          <ScrollArea.Viewport class={scrollStyles.Viewport}>
+            <ScrollArea.Content
+              class={clsx(scrollStyles.Content, "p-2 h-full")}
+            >
+              <div class="flex flex-col gap-2">
+                <For each={noteFolders()}>
+                  {(f) => (
+                    <div class="flex items-center justify-between">
+                      <span class="truncate">{f.name}</span>
+                      <span class="w-3rem text-right text-mut-fg">{f.notes.length}</span>
+                    </div>
+                  )}
+                </For>
+              </div>
+            </ScrollArea.Content>
+          </ScrollArea.Viewport>
+          <ScrollArea.Scrollbar class={scrollStyles.Scrollbar}>
+            <ScrollArea.Thumb class={scrollStyles.Thumb} />
+          </ScrollArea.Scrollbar>
+          <ScrollArea.Corner class={scrollStyles.Corner} />
+        </ScrollArea.Root>
+      </Splitter.Panel>
 
-      <form class="flex-1 flex flex-col gap-4">
-        <div class="space-y-2">
-          <div class="flex items-center gap-2">
-            <label class="w-16 text-sm text-muted-foreground">To</label>
-            <input
-              type="email"
-              value={formData().to}
-              onInput={(e) => setFormData({ ...formData(), to: e.currentTarget.value })}
-              placeholder="recipient@example.com"
-              class="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="w-16 text-sm text-muted-foreground">Cc</label>
-            <input
-              type="email"
-              value={formData().cc}
-              onInput={(e) => setFormData({ ...formData(), cc: e.currentTarget.value })}
-              placeholder="cc@example.com"
-              class="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="w-16 text-sm text-muted-foreground">Bcc</label>
-            <input
-              type="email"
-              value={formData().bcc}
-              onInput={(e) => setFormData({ ...formData(), bcc: e.currentTarget.value })}
-              placeholder="bcc@example.com"
-              class="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div class="flex items-center gap-2">
-            <label class="w-16 text-sm text-muted-foreground">Subject</label>
-            <input
-              type="text"
-              value={formData().subject}
-              onInput={(e) => setFormData({ ...formData(), subject: e.currentTarget.value })}
-              placeholder="Email subject"
-              class="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
+      <Splitter.ResizeTrigger 
+        class={splitterStyles.ResizeTrigger} 
+        id="f:n" 
+        aria-label="Resize">
+        <Splitter.ResizeTriggerIndicator
+          class={splitterStyles.ResizeTriggerIndicator}
+        />
+      </Splitter.ResizeTrigger>
+
+      <Splitter.Panel id="n" class={clsx(splitterStyles.Panel, "w-full")}>
+        <div class="h-3rem p-4 font-700 flex items-center" style={{ 'border-bottom': '1px solid var(--color-border)' }}>Notes</div>
+        <ScrollArea.Root class={clsx(scrollStyles.Root, "w-full")} style={{ 'height': 'calc(100% - 40px - 3rem)' }}>
+          <ScrollArea.Viewport class={scrollStyles.Viewport}>
+            <ScrollArea.Content
+              class={clsx(scrollStyles.Content, "p-2 h-full")}
+            >
+              <div class="flex flex-col gap-2">
+                <For each={currentFolder()?.notes}>
+                  {(f) => (
+                    <div class="space-y-2">
+                      <div class="flex items-center justify-between">
+                        <h5 class="truncate">{f.title}</h5>
+                        <span>{formatDate(f.updateAt)}</span>
+                      </div>
+                      <div class="text-sm truncate">{f.content.slice(0, 30)}</div>
+                    </div>
+                  )}
+                </For>
+              </div>
+            </ScrollArea.Content>
+          </ScrollArea.Viewport>
+          <ScrollArea.Scrollbar class={scrollStyles.Scrollbar}>
+            <ScrollArea.Thumb class={scrollStyles.Thumb} />
+          </ScrollArea.Scrollbar>
+          <ScrollArea.Corner class={scrollStyles.Corner} />
+        </ScrollArea.Root>
+      </Splitter.Panel>
+
+      <Splitter.ResizeTrigger 
+        class={splitterStyles.ResizeTrigger}
+        id="n:c"
+        aria-label="Resize">
+        <Splitter.ResizeTriggerIndicator
+          class={splitterStyles.ResizeTriggerIndicator}
+        />
+      </Splitter.ResizeTrigger>
+
+      <Splitter.Panel id="c" class={clsx(splitterStyles.Panel, "w-full")}>
+        <div style={{'height': 'calc(100% - 40px)'}}>
+          <div class="text-text bg-bg" ref={el => setEditor(el)} />
         </div>
-
-        <div class="flex-1 flex flex-col gap-4">
-          <textarea
-            value={formData().body}
-            onInput={(e) => setFormData({ ...formData(), body: e.currentTarget.value })}
-            placeholder="Write your message here..."
-            class="flex-1 px-4 py-3 bg-background border border-border rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-          />
-        </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex gap-2">
-            <button
-              type="button"
-              class="p-2 text-muted-foreground hover:text-white hover:bg-surface rounded transition-colors"
-              title="Attach files"
-            >
-              <div class="i-ri-attachment-line w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              class="p-2 text-muted-foreground hover:text-white hover:bg-surface rounded transition-colors"
-              title="Insert link"
-            >
-              <div class="i-ri-link-line w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              class="p-2 text-muted-foreground hover:text-white hover:bg-surface rounded transition-colors"
-              title="Insert image"
-            >
-              <div class="i-ri-image-line w-5 h-5" />
-            </button>
-          </div>
-
-          <div class="flex gap-3">
-            <button
-              type="button"
-              class="px-4 py-2 text-muted-foreground hover:text-white transition-colors"
-            >
-              Save Draft
-            </button>
-            <button
-              type="button"
-              onClick={handleSend}
-              class="px-6 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <div class="i-ri-send-plane-fill w-4 h-4" />
-              Send
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
+      </Splitter.Panel>
+    </Splitter.Root>
   )
 }
