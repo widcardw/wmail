@@ -37,11 +37,11 @@ export const mailStore = {
   async addAccount(account: Omit<Account, 'id' | 'createdAt'>) {
     setMailState({ loading: true, error: null })
     try {
-      const newAccount = await MailAccountService.AddAccount({
+      const newAccount = (await MailAccountService.AddAccount({
         ...account,
         id: '',
         createdAt: new Date().toISOString(),
-      }) as Account
+      })) as Account
       setMailState((state) => ({
         accounts: [...state.accounts, newAccount],
         loading: false,
@@ -76,10 +76,10 @@ export const mailStore = {
         currentAccount: state.currentAccount?.id === accountId ? null : state.currentAccount,
         loading: false,
       }))
-      toaster.success({title: 'Deleted an account!'})
+      toaster.success({ title: 'Deleted an account!' })
     } catch (error) {
       setMailState({ error: String(error), loading: false })
-      toaster.error({title: 'Error occurred!', description: String(error)})
+      toaster.error({ title: 'Error occurred!', description: String(error) })
       // throw error
     }
   },

@@ -1,14 +1,14 @@
-import { Email } from "#/wmail/services";
-import { Component, For } from "solid-js";
-import { ScrollArea } from "@ark-ui/solid";
-import clsx from "clsx";
-import scrollStyles from "~/components/ui/scroll_area/index.module.css";
-import MailAbstract from "./mail-abs";
+import { Email } from '#/wmail/services'
+import { Component, For } from 'solid-js'
+import { ScrollArea } from '@ark-ui/solid'
+import clsx from 'clsx'
+import scrollStyles from '~/components/ui/scroll_area/index.module.css'
+import MailAbstract from './mail-abs'
 
 const InboxList: Component<{
-  emails: Email[];
-  selectedUid: number | undefined;
-  onEmailSelect: (email: Email) => void;
+  emails: Email[]
+  selectedUid: number | undefined
+  onEmailSelect: (email: Email) => void
 }> = (props) => {
   return (
     <ScrollArea.Root class={clsx(scrollStyles.Root, scrollStyles['with-header'])}>
@@ -16,7 +16,11 @@ const InboxList: Component<{
         <ScrollArea.Content class={clsx(scrollStyles.Content)}>
           <For each={props.emails}>
             {(email) => (
-              <MailAbstract email={email} selected={email.uid === props.selectedUid} onClick={() => props.onEmailSelect(email)} />
+              <MailAbstract
+                email={email}
+                selected={email.uid === props.selectedUid}
+                onClick={() => props.onEmailSelect(email)}
+              />
             )}
           </For>
         </ScrollArea.Content>
@@ -37,7 +41,7 @@ const InboxList: Component<{
     //     )}
     //   </For>
     // </div>
-  );
-};
+  )
+}
 
-export default InboxList;
+export default InboxList

@@ -1,0 +1,12 @@
+.control-group {
+  button {
+    color: var(--color-fg);
+  }
+  button:disabled {
+    opacity: 50%;
+  }
+  .is-active {
+    background-color: var(--color-primary-hvbg);
+    color: var(--color-primary);
+  }
+}

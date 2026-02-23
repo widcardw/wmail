@@ -5,11 +5,7 @@ function capitalize(word: string) {
 function getEmailSender(email: string) {
   const domain = email.split('@')[1]
   const slices = domain.split('.')
-  return capitalize(slices[slices.length-2])
+  return capitalize(slices[slices.length - 2])
 }
 
-
-export {
-  getEmailSender,
-  capitalize,
-}
+export { getEmailSender, capitalize }

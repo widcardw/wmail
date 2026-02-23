@@ -53,8 +53,9 @@ html.light {
   --color-muted-foreground: #555;
 }
 
-code, pre {
-    font-family: var(--font-mono);
+code,
+pre {
+  font-family: var(--font-mono);
 }
 
 * {

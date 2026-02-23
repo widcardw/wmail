@@ -6,14 +6,14 @@ const VariantClasses = {
   destructive: 'bg-destructive text-destructive-fg hover:bg-destructive-hover',
   destructive_icon: 'bg-transparent text-destructive-fg hover:bg-destructive',
   secondary: 'bg-secondary text-secondary-fg hover:bg-secondary-hover',
-  ghost: 'bg-transparent text-fg hover:bg-mut hover:bg-opacity-10',
+  ghost: 'bg-transparent text-text hover:bg-primary-hvbg',
 }
 
 const SizeClasses = {
   default: 'h-10 px-4 py-2 text-sm',
   sm: 'h-9 px-3 text-xs',
   lg: 'h-11 px-8 text-md',
-  icon: 'size-10 text-sm',
+  icon: 'size-8 text-sm',
 }
 
 const Button: Component<{
@@ -22,6 +22,7 @@ const Button: Component<{
   size?: 'default' | 'sm' | 'lg' | 'icon'
   onClick?: (args: unknown) => unknown
   children?: JSXElement
+  class?: string
 }> = (props) => {
   const p = mergeProps(
     {
@@ -30,6 +31,7 @@ const Button: Component<{
       children: '',
       disabled: false,
       size: 'default',
+      class: '',
     },
     props,
   )
@@ -39,7 +41,13 @@ const Button: Component<{
   return (
     <button
       disabled={p.disabled}
-      class={clsx(commonClass, VariantClasses[p.variant], SizeClasses[p.size], 'font-sans')}
+      class={clsx(
+        commonClass,
+        VariantClasses[p.variant],
+        SizeClasses[p.size],
+        'font-sans',
+        p.class,
+      )}
       onClick={p.onClick}
     >
       {p.children}
