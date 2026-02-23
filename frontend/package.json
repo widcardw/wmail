@@ -24,6 +24,7 @@
     "solid-tiptap": "^0.8.0"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.93",
     "@iconify-json/ri": "^1.2.10",
     "@solidjs/router": "^0.15.4",
     "@types/node": "^25.2.3",
