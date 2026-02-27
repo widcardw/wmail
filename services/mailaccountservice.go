@@ -6,22 +6,25 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/emersion/go-imap"
 )
 
 // Account represents an email account configuration
 type Account struct {
-	ID               string `json:"id"`
-	Name             string `json:"name"`
-	Email            string `json:"email"`
-	IMAPHost         string `json:"imapHost"`
-	IMAPPort         int    `json:"imapPort"`
-	IMAPUseSSL       bool   `json:"imapUseSSL"`
-	SMTPHost         string `json:"smtpHost"`
-	SMTPPort         int    `json:"smtpPort"`
-	SMTPUseSSL       bool   `json:"smtpUseSSL"`
-	Username         string `json:"username"`
-	Password         string `json:"password"` // In production, this should be encrypted
-	CreatedAt        string `json:"createdAt"`
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	Email      string   `json:"email"`
+	IMAPHost   string   `json:"imapHost"`
+	IMAPPort   int      `json:"imapPort"`
+	IMAPUseSSL bool     `json:"imapUseSSL"`
+	SMTPHost   string   `json:"smtpHost"`
+	SMTPPort   int      `json:"smtpPort"`
+	SMTPUseSSL bool     `json:"smtpUseSSL"`
+	Username   string   `json:"username"`
+	Password   string   `json:"password"` // In production, this should be encrypted
+	CreatedAt  string   `json:"createdAt"`
+	Folders    []Folder `json:"folders"`
 }
 
 // MailAccountService manages email accounts
@@ -70,8 +73,20 @@ func (s *MailAccountService) loadAccounts() error {
 	s.accountsMutex.Lock()
 	defer s.accountsMutex.Unlock()
 
+	var infoChanged = false
 	for _, acc := range accounts {
 		s.accounts[acc.ID] = acc
+		if len(acc.Folders) == 0 {
+			folders, err := s.fetchFoldersForAccount(acc)
+			if err == nil {
+				acc.Folders = folders
+			}
+			infoChanged = true
+		}
+	}
+	
+	if infoChanged {
+		s.saveAccounts()
 	}
 
 	return nil
@@ -165,4 +180,111 @@ func (s *MailAccountService) DeleteAccount(id string) error {
 	delete(s.accounts, id)
 	fmt.Println("After delete")
 	return s.saveAccounts()
+}
+
+// GetFolders retrieves folders for an account
+func (s *MailAccountService) GetFolders(accountID string) ([]*Folder, error) {
+	account, err := s.GetAccount(accountID)
+	if err != nil {
+		return nil, err
+	}
+
+	c, err := ConnectIMAP(account)
+	if err != nil {
+		return nil, err
+	}
+	defer c.Close()
+
+	mailboxes := make(chan *imap.MailboxInfo, 10)
+	done := make(chan error, 1)
+
+	go func() {
+		done <- c.List("", "*", mailboxes)
+	}()
+
+	var folders []*Folder
+
+	for m := range mailboxes {
+		folder := &Folder{
+			Name: m.Name,
+		}
+
+		status, err := c.Status(m.Name, []imap.StatusItem{imap.StatusUnseen, imap.StatusMessages})
+		if err == nil {
+			folder.Unread = int(status.Unseen)
+			folder.Total = int(status.Messages)
+		}
+
+		folders = append(folders, folder)
+	}
+
+	if err := <-done; err != nil {
+		return nil, err
+	}
+
+	return folders, nil
+}
+
+// SyncFolders fetches and saves folders for an account
+func (s *MailAccountService) SyncFolders(accountID string) error {
+	folders, err := s.GetFolders(accountID)
+	if err != nil {
+		return err
+	}
+
+	s.accountsMutex.Lock()
+	defer s.accountsMutex.Unlock()
+
+	acc, exists := s.accounts[accountID]
+	if !exists {
+		return fmt.Errorf("account not found")
+	}
+
+	acc.Folders = make([]Folder, len(folders))
+	for i, f := range folders {
+		acc.Folders[i] = Folder{
+			Name:   f.Name,
+			Unread: f.Unread,
+			Total:  f.Total,
+		}
+	}
+	return s.saveAccounts()
+}
+
+// fetchFoldersForAccount fetches folders for an account without modifying the map
+func (s *MailAccountService) fetchFoldersForAccount(account *Account) ([]Folder, error) {
+	c, err := ConnectIMAP(account)
+	if err != nil {
+		return nil, err
+	}
+	defer c.Close()
+
+	mailboxes := make(chan *imap.MailboxInfo, 10)
+	done := make(chan error, 1)
+
+	go func() {
+		done <- c.List("", "*", mailboxes)
+	}()
+
+	var folders []Folder
+
+	for m := range mailboxes {
+		folder := Folder{
+			Name: m.Name,
+		}
+
+		status, err := c.Status(m.Name, []imap.StatusItem{imap.StatusUnseen, imap.StatusMessages})
+		if err == nil {
+			folder.Unread = int(status.Unseen)
+			folder.Total = int(status.Messages)
+		}
+
+		folders = append(folders, folder)
+	}
+
+	if err := <-done; err != nil {
+		return nil, err
+	}
+
+	return folders, nil
 }

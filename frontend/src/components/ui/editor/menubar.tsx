@@ -25,6 +25,8 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       canStrike: editor?.can().chain().focus().toggleStrike().run(),
       isCode: editor?.isActive('code'),
       canCode: editor?.can().chain().focus().toggleCode().run(),
+      isUnderline: editor?.isActive('underline'),
+      canUnderline: editor?.can().chain().focus().toggleUnderline().run(),
       isParagraph: editor?.isActive('paragraph'),
       isHeading1: editor?.isActive('heading', { level: 1 }),
       isHeading2: editor?.isActive('heading', { level: 2 }),
@@ -44,6 +46,23 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       class="control-group h-3rem flex items-center gap-1 px-1"
       style={{ 'border-bottom': '1px solid var(--color-border)' }}
     >
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => props.editor!.chain().focus().undo().run()}
+        disabled={!state().canUndo}
+      >
+        <div class="i-ri-arrow-go-back-fill w-5 h-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => props.editor!.chain().focus().redo().run()}
+        disabled={!state().canRedo}
+      >
+        <div class="i-ri-arrow-go-forward-fill w-5 h-5" />
+      </Button>
+      <div class="h-5" style={{'border-right': '1px solid var(--color-border)'}} />
       <Toggle.Root
         pressed={state().isBold}
         onPressedChange={() => props.editor!.chain().focus().toggleBold().run()}
@@ -69,6 +88,14 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
         <div class="i-ri-strikethrough w-5 h-5"></div>
       </Toggle.Root>
       <Toggle.Root
+        pressed={state().isUnderline}
+        onPressedChange={() => props.editor!.chain().focus().toggleUnderline().run()}
+        disabled={!state().canUnderline}
+        class={clsx(toggleStyles.Root)}
+      >
+        <div class="i-ri-underline w-5 h-5"></div>
+      </Toggle.Root>
+      <Toggle.Root
         pressed={state().isCode}
         onPressedChange={() => props.editor!.chain().focus().toggleCode().run()}
         disabled={!state().canCode}
@@ -84,6 +111,7 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       >
         <div class="i-ri-eraser-line w-5 h-5" />
       </Button>
+      <div class="h-5" style={{'border-right': '1px solid var(--color-border)'}} />
       <Button
         variant="ghost"
         size="icon"
@@ -173,23 +201,7 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
         size="icon"
         onClick={() => props.editor!.chain().focus().setHardBreak().run()}
       >
-        <div class="i-ri-arrow-left-down-long-line w-5 h-5" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => props.editor!.chain().focus().undo().run()}
-        disabled={!state().canUndo}
-      >
-        <div class="i-ri-arrow-go-back-fill w-5 h-5" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => props.editor!.chain().focus().redo().run()}
-        disabled={!state().canRedo}
-      >
-        <div class="i-ri-arrow-go-forward-fill w-5 h-5" />
+        <div class="i-ri-text-wrap w-5 h-5" />
       </Button>
     </div>
   )

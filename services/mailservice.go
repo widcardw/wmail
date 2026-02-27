@@ -5,9 +5,8 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-
-	// "log"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
@@ -66,54 +65,11 @@ func NewMailService(accountService *MailAccountService) *MailService {
 	}
 }
 
-// GetFolders retrieves folders for an account
-func (s *MailService) GetFolders(accountID string) ([]*Folder, error) {
-	account, err := s.accountService.GetAccount(accountID)
-	if err != nil {
-		return nil, err
-	}
-
-	c, err := s.connectIMAP(account)
-	if err != nil {
-		return nil, err
-	}
-	defer c.Close()
-
-	mailboxes := make(chan *imap.MailboxInfo, 10)
-	done := make(chan error, 1)
-
-	go func() {
-		done <- c.List("", "*", mailboxes)
-	}()
-
-	var folders []*Folder
-
-	for m := range mailboxes {
-		folder := &Folder{
-			Name: m.Name,
-		}
-
-		// Get folder status
-		status, err := c.Status(m.Name, []imap.StatusItem{imap.StatusUnseen, imap.StatusMessages})
-		if err == nil {
-			folder.Unread = int(status.Unseen)
-			folder.Total = int(status.Messages)
-		}
-
-		folders = append(folders, folder)
-	}
-
-	if err := <-done; err != nil {
-		return nil, err
-	}
-
-	return folders, nil
-}
-
 // GetEmails retrieves emails from a folder with cache support
 // forceRefresh: if true, bypass cache and fetch from server
 func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, forceRefresh bool) ([]*Email, error) {
-	fmt.Printf("[GetEmails] ENTRY - accountID=%s, folder=%s, page=%d, pageSize=%d, forceRefresh=%t\n", accountID, folder, page, pageSize, forceRefresh)
+	fmt.Printf("[GetEmails] ENTRY - accountID=%s, folder=%s, page=%d, pageSize=%d, forceRefresh=%t\n",
+		accountID, folder, page, pageSize, forceRefresh)
 
 	shouldRefresh := forceRefresh
 
@@ -135,7 +91,7 @@ func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, fo
 	}
 	fmt.Printf("[GetEmails] Found account: %s\n", account.Email)
 
-	c, err := s.connectIMAP(account)
+	c, err := ConnectIMAP(account)
 	if err != nil {
 		return nil, err
 	}
@@ -248,6 +204,14 @@ func (s *MailService) GetEmails(accountID, folder string, page, pageSize int, fo
 		return nil, err
 	}
 
+	// Sort emails by date in descending order (newest first)
+	sort.Slice(emails, func(i, j int) bool {
+		dateI, _ := time.Parse(time.RFC3339, emails[i].Date)
+		dateJ, _ := time.Parse(time.RFC3339, emails[j].Date)
+		return dateJ.Before(dateI) // j before i means descending
+	})
+	fmt.Printf("[GetEmails] Sorted emails by date (descending)\n")
+
 	// Cache the fetched emails
 	if s.cache != nil && len(emails) > 0 {
 		// First delete old cached emails for this folder
@@ -286,7 +250,7 @@ func (s *MailService) GetEmail(accountID, folder string, uid uint32) (*Email, er
 		return nil, err
 	}
 
-	c, err := s.connectIMAP(account)
+	c, err := ConnectIMAP(account)
 	if err != nil {
 		return nil, err
 	}
@@ -465,50 +429,13 @@ func (s *MailService) TestConnection(accountID string) error {
 		return err
 	}
 
-	c, err := s.connectIMAP(account)
+	c, err := ConnectIMAP(account)
 	if err != nil {
 		return err
 	}
 	defer c.Close()
 
 	return c.Noop()
-}
-
-// connectIMAP connects to IMAP server
-func (s *MailService) connectIMAP(account *Account) (*client.Client, error) {
-	var c *client.Client
-	var err error
-
-	if account.IMAPUseSSL {
-		c, err = client.DialTLS(
-			fmt.Sprintf("%s:%d", account.IMAPHost, account.IMAPPort),
-			&tls.Config{InsecureSkipVerify: true},
-		)
-	} else {
-		c, err = client.Dial(fmt.Sprintf("%s:%d", account.IMAPHost, account.IMAPPort))
-	}
-
-	if err != nil {
-		fmt.Printf("[connectIMAP] Found error while creating client, %v\n", err)
-		return nil, err
-	}
-
-	fmt.Println("[connectIMAP] Successfully dial") // ✅
-
-	// Login (use email as username if username is not set)
-	username := account.Username
-	if username == "" {
-		username = account.Email
-	}
-	if err := c.Login(username, account.Password); err != nil {
-		c.Close()
-		fmt.Printf("[connectIMAP] Login error, %v\n", err)
-		return nil, err
-	}
-
-	fmt.Println("[connectIMAP] Successfully login") // ✅
-
-	return c, nil
 }
 
 // formatAddress formats an address list to string

@@ -2,7 +2,7 @@ import MailBoxLayout from '~/components/layouts/mailboxlayout'
 
 export default function SpamPage() {
   return (
-    <MailBoxLayout activeFolder="spam">
+    <MailBoxLayout inbox="Not available" activeFolder="spam">
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center">
           <div class="i-ri-spam-line w-20 h-20 text-muted-foreground mx-auto mb-4" />

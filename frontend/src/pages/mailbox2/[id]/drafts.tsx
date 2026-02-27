@@ -2,7 +2,7 @@ import MailBoxLayout from '~/components/layouts/mailboxlayout'
 
 export default function DraftsPage() {
   return (
-    <MailBoxLayout activeFolder="drafts">
+    <MailBoxLayout inbox="Not available" activeFolder="drafts">
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center">
           <div class="i-ri-file-text-line w-20 h-20 text-muted-foreground mx-auto mb-4" />

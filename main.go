@@ -67,8 +67,8 @@ func main() {
 		},
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
-		MinWidth: 800,
-		MinHeight: 600,
+		MinWidth:         1024,
+		MinHeight:        768,
 	})
 
 	// Run the application. This blocks until the application has been exited.

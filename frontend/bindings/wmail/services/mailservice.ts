@@ -33,15 +33,6 @@ export function GetEmails(accountID: string, folder: string, page: number, pageS
     });
 }
 
-/**
- * GetFolders retrieves folders for an account
- */
-export function GetFolders(accountID: string): $CancellablePromise<($models.Folder | null)[]> {
-    return $Call.ByID(350864673, accountID).then(($result: any) => {
-        return $$createType5($result);
-    });
-}
-
 export function SendEmail(req: $models.SendEmailRequest | null): $CancellablePromise<void> {
     return $Call.ByID(1988209338, req);
 }
@@ -57,6 +48,3 @@ export function TestConnection(accountID: string): $CancellablePromise<void> {
 const $$createType0 = $models.Email.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType1);
-const $$createType3 = $models.Folder.createFrom;
-const $$createType4 = $Create.Nullable($$createType3);
-const $$createType5 = $Create.Array($$createType4);

@@ -5,15 +5,19 @@ const formatDate = (dateString: string) => {
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
   if (days === 0) {
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString('zh-CN', {
       hour: '2-digit',
       minute: '2-digit',
     })
   } else if (days < 7) {
-    return date.toLocaleDateString('en-US', { weekday: 'short' })
+    return date.toLocaleDateString('zh-CN', { weekday: 'short' })
   } else {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
   }
 }
 
-export { formatDate }
+const fullDate = (dateString: string) => {
+  return new Date(dateString).toLocaleString()
+}
+
+export { formatDate, fullDate }

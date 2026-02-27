@@ -49,6 +49,22 @@ export function GetAccounts(): $CancellablePromise<($models.Account | null)[]> {
 }
 
 /**
+ * GetFolders retrieves folders for an account
+ */
+export function GetFolders(accountID: string): $CancellablePromise<($models.Folder | null)[]> {
+    return $Call.ByID(511920588, accountID).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
+/**
+ * SyncFolders fetches and saves folders for an account
+ */
+export function SyncFolders(accountID: string): $CancellablePromise<void> {
+    return $Call.ByID(3528580295, accountID);
+}
+
+/**
  * UpdateAccount updates an existing account
  */
 export function UpdateAccount(account: $models.Account | null): $CancellablePromise<void> {
@@ -59,3 +75,6 @@ export function UpdateAccount(account: $models.Account | null): $CancellableProm
 const $$createType0 = $models.Account.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = $models.Folder.createFrom;
+const $$createType4 = $Create.Nullable($$createType3);
+const $$createType5 = $Create.Array($$createType4);

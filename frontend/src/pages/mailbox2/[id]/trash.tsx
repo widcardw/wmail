@@ -2,7 +2,7 @@ import MailBoxLayout from '~/components/layouts/mailboxlayout'
 
 export default function TrashPage() {
   return (
-    <MailBoxLayout activeFolder="trash">
+    <MailBoxLayout inbox="Not available" activeFolder="trash">
       <div class="flex-1 flex items-center justify-center">
         <div class="text-center">
           <div class="i-ri-delete-bin-line w-20 h-20 text-muted-foreground mx-auto mb-4" />

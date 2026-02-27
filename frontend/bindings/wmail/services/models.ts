@@ -25,6 +25,7 @@ export class Account {
      */
     "password": string;
     "createdAt": string;
+    "folders": Folder[];
 
     /** Creates a new Account instance. */
     constructor($$source: Partial<Account> = {}) {
@@ -64,6 +65,9 @@ export class Account {
         if (!("createdAt" in $$source)) {
             this["createdAt"] = "";
         }
+        if (!("folders" in $$source)) {
+            this["folders"] = [];
+        }
 
         Object.assign(this, $$source);
     }
@@ -72,7 +76,11 @@ export class Account {
      * Creates a new Account instance from a string or object.
      */
     static createFrom($$source: any = {}): Account {
+        const $$createField12_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("folders" in $$parsedSource) {
+            $$parsedSource["folders"] = $$createField12_0($$parsedSource["folders"]);
+        }
         return new Account($$parsedSource as Partial<Account>);
     }
 }
@@ -144,8 +152,8 @@ export class Email {
      * Creates a new Email instance from a string or object.
      */
     static createFrom($$source: any = {}): Email {
-        const $$createField5_0 = $$createType0;
-        const $$createField6_0 = $$createType0;
+        const $$createField5_0 = $$createType2;
+        const $$createField6_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("to" in $$parsedSource) {
             $$parsedSource["to"] = $$createField5_0($$parsedSource["to"]);
@@ -232,9 +240,9 @@ export class SendEmailRequest {
      * Creates a new SendEmailRequest instance from a string or object.
      */
     static createFrom($$source: any = {}): SendEmailRequest {
-        const $$createField1_0 = $$createType0;
-        const $$createField2_0 = $$createType0;
-        const $$createField3_0 = $$createType0;
+        const $$createField1_0 = $$createType2;
+        const $$createField2_0 = $$createType2;
+        const $$createField3_0 = $$createType2;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("to" in $$parsedSource) {
             $$parsedSource["to"] = $$createField1_0($$parsedSource["to"]);
@@ -250,4 +258,6 @@ export class SendEmailRequest {
 }
 
 // Private type creation functions
-const $$createType0 = $Create.Array($Create.Any);
+const $$createType0 = Folder.createFrom;
+const $$createType1 = $Create.Array($$createType0);
+const $$createType2 = $Create.Array($Create.Any);

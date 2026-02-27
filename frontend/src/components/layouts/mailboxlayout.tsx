@@ -31,7 +31,7 @@ const MailBoxLayout: Component<{
           { id: 'inboxlist', minSize: 10 },
           { id: 'mailbody', minSize: 30 },
         ]}
-        defaultSize={[15, 20, 65]}
+        defaultSize={[15, 25, 60]}
       >
         {/* 左侧 - 账户列表 */}
         <Splitter.Panel id="account" class={splitterStyles.Panel}>
@@ -82,7 +82,7 @@ const MailBoxLayout: Component<{
             class={clsx(scrollStyles.Root, 'w-full', mailboxlayoutStyles.ScrollMailBody)}
           >
             <ScrollArea.Viewport class={scrollStyles.Viewport}>
-              <ScrollArea.Content class={clsx(scrollStyles.Content, 'p-2 h-full')}>
+              <ScrollArea.Content class={clsx(scrollStyles.Content, 'h-full')}>
                 {props.children}
               </ScrollArea.Content>
             </ScrollArea.Viewport>

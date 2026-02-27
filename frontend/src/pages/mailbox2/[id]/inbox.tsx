@@ -3,6 +3,7 @@ import { useParams } from '@solidjs/router'
 import { Email, MailService } from '#/wmail/services'
 import MailBoxLayout from '~/components/layouts/mailboxlayout'
 import InboxList from '~/components/useful/inboxlist'
+import EmailContent from '~/components/ui/email_content'
 
 export default function InboxPage() {
   const params = useParams()
@@ -84,7 +85,7 @@ export default function InboxPage() {
     >
       <Show when={selectedEmail() !== null} fallback="No email selected">
         <Show when={loadingBody() === null}>
-          <pre style="white-space: pre-wrap; word-break: break-word;">{selectedEmail()!.body}</pre>
+          <EmailContent email={selectedEmail()!} />
         </Show>
         <Show when={loadingBody() !== null}>
           <div class="p-4 text-center">
