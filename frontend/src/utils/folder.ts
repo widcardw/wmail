@@ -1,44 +1,44 @@
 // @unocss-include
 
-import { Folder } from "#/wmail/services"
+import { Folder } from '#/wmail/services'
 
 const MAPPING = {
-  'inbox': {
+  inbox: {
     name: 'Inbox',
     icon: 'i-ri-inbox-2-line',
     path: 'inbox',
-    alias: ['inbox', 'receive', '收件箱']
+    alias: ['inbox', 'receive', '收件箱'],
   },
-  'sent': {
+  sent: {
     name: 'Sent',
     icon: 'i-ri-send-plane-line',
     path: 'sent',
-    alias: ['sent', 'send', '已发送', '发件', 'sent messages']
+    alias: ['sent', 'send', '已发送', '发件', 'sent messages'],
   },
-  'drafts': {
+  drafts: {
     name: 'Drafts',
     icon: 'i-ri-draft-line',
     path: 'drafts',
-    alias: ['drafts', 'draft', '草稿', '草稿箱']
+    alias: ['drafts', 'draft', '草稿', '草稿箱'],
   },
-  'spam': {
+  spam: {
     name: 'Spam',
     icon: 'i-ri-spam-2-line',
     path: 'spam',
-    alias: ['spam', 'junk', '垃圾', '垃圾邮件']
+    alias: ['spam', 'junk', '垃圾', '垃圾邮件'],
   },
-  'trash': {
+  trash: {
     name: 'Trash',
     icon: 'i-ri-delete-bin-line',
     path: 'trash',
-    alias: ['trash', 'deleted', 'deletions', '删除', '回收站', 'bin']
+    alias: ['trash', 'deleted', 'deletions', '删除', '回收站', 'bin'],
   },
-  'other': {
-    'name': '$1',
+  other: {
+    name: '$1',
     icon: 'i-ri-folder-line',
     path: 'other',
-    alias: []
-  }
+    alias: [],
+  },
 } as const
 
 interface PanelItem {
@@ -81,7 +81,7 @@ function similarityScore(str1: string, str2: string): number {
       matrix[i][j] = Math.min(
         matrix[i - 1][j] + 1,
         matrix[i][j - 1] + 1,
-        matrix[i - 1][j - 1] + cost
+        matrix[i - 1][j - 1] + cost,
       )
     }
   }
@@ -96,7 +96,7 @@ function similarityScore(str1: string, str2: string): number {
 function matchFolderType(folderName: string): string {
   const lowerName = folderName.toLowerCase()
 
-  let bestMatch: { type: string, score: number } | null = null
+  let bestMatch: { type: string; score: number } | null = null
 
   for (const [type, config] of Object.entries(MAPPING)) {
     if (type === 'other') continue
@@ -118,7 +118,8 @@ function matchFolderType(folderName: string): string {
 
       // 计算相似度分数
       const score = similarityScore(lowerName, lowerAlias)
-      if (score >= 0.7) { // 阈值0.7，表示至少70%相似
+      if (score >= 0.7) {
+        // 阈值0.7，表示至少70%相似
         if (!bestMatch || score > bestMatch.score) {
           bestMatch = { type, score }
         }
@@ -141,11 +142,11 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
     drafts: [],
     spam: [],
     trash: [],
-    other: []
+    other: [],
   }
 
   // 遍历所有文件夹，按语义类型进行分类
-  folders.forEach(folder => {
+  folders.forEach((folder) => {
     const type = matchFolderType(folder.name)
     categorized[type].push(folder)
   })
@@ -156,10 +157,10 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
   // 定义标准文件夹的显示顺序
   const order: Array<keyof typeof MAPPING> = ['inbox', 'sent', 'drafts', 'spam', 'trash']
 
-  order.forEach(type => {
+  order.forEach((type) => {
     const items = categorized[type]
     if (items.length > 0) {
-      items.forEach(item => {
+      items.forEach((item) => {
         const mapping = MAPPING[type]
         result.push({
           name: mapping.name,
@@ -167,7 +168,7 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
           path: mapping.path,
           unread: item.unread,
           total: item.total,
-          children: []
+          children: [],
         })
       })
     }
@@ -177,13 +178,12 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
   const otherFolders = categorized.other
   if (otherFolders.length > 0) {
     // 分离父文件夹和子文件夹（用 "/" 分隔）
-    const parentFolders = otherFolders.filter(f => !f.name.includes('/'))
-    const childFolders = otherFolders.filter(f => f.name.includes('/'))
+    const parentFolders = otherFolders.filter((f) => !f.name.includes('/'))
+    const childFolders = otherFolders.filter((f) => f.name.includes('/'))
 
     // 优先找名为 "其他文件夹" 或 "Other" 的作为父级
-    let otherFolder = parentFolders.find(f =>
-      f.name.toLowerCase().includes('其他') ||
-      f.name.toLowerCase().includes('other')
+    let otherFolder = parentFolders.find(
+      (f) => f.name.toLowerCase().includes('其他') || f.name.toLowerCase().includes('other'),
     )
 
     // 如果没有明确的 "其他文件夹"，取第一个作为代表
@@ -195,14 +195,14 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
       const parentName = otherFolder.name
       // 查找属于该父文件夹的子文件夹
       const children = childFolders
-        .filter(f => f.name.startsWith(parentName + '/'))
-        .map(f => ({
+        .filter((f) => f.name.startsWith(parentName + '/'))
+        .map((f) => ({
           name: f.name.split('/').pop() || f.name,
           icon: 'i-ri-folder-line',
           path: f.name,
           unread: f.unread,
           total: f.total,
-          children: []
+          children: [],
         }))
 
       result.push({
@@ -211,22 +211,22 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
         path: otherFolder.name,
         unread: otherFolder.unread,
         total: otherFolder.total,
-        children
+        children,
       })
 
       // 处理剩余的独立子文件夹（不属于任何已匹配的父文件夹）
       const processedParents = new Set([parentName])
-      parentFolders.forEach(p => {
+      parentFolders.forEach((p) => {
         if (!processedParents.has(p.name)) {
           const children2 = childFolders
-            .filter(f => f.name.startsWith(p.name + '/'))
-            .map(f => ({
+            .filter((f) => f.name.startsWith(p.name + '/'))
+            .map((f) => ({
               name: f.name.split('/').pop() || f.name,
               icon: 'i-ri-folder-line',
               path: f.name,
               unread: f.unread,
               total: f.total,
-              children: []
+              children: [],
             }))
 
           result.push({
@@ -235,7 +235,7 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
             path: p.name,
             unread: p.unread,
             total: p.total,
-            children: children2
+            children: children2,
           })
         }
       })
@@ -246,4 +246,4 @@ function foldersToPanel(folders: Array<Folder>): PanelItem[] {
   return result
 }
 
-export {MAPPING, type PanelItem, foldersToPanel}
+export { MAPPING, type PanelItem, foldersToPanel }

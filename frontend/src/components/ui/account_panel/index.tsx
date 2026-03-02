@@ -58,9 +58,7 @@ const AccountPanel: Component<{
       </A>
       {folder.children.length > 0 && (
         <div class="space-y-1">
-          <For each={folder.children}>
-            {(child) => renderFolder(child, level + 1)}
-          </For>
+          <For each={folder.children}>{(child) => renderFolder(child, level + 1)}</For>
         </div>
       )}
     </div>
@@ -84,9 +82,7 @@ const AccountPanel: Component<{
         <div class={colStyles.Body}>
           <div class="space-y-1">
             {folders().length > 0 ? (
-              <For each={folders()}>
-                {(folder) => renderFolder(folder)}
-              </For>
+              <For each={folders()}>{(folder) => renderFolder(folder)}</For>
             ) : (
               <div class="px-3 py-2 text-sm text-text-muted">No folders</div>
             )}
