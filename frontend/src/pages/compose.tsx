@@ -11,6 +11,7 @@ import { TextStyleKit } from '@tiptap/extension-text-style'
 import '~/components/ui/editor/editor.scss'
 import EditorMenubar from '~/components/ui/editor/menubar'
 import { TableKit } from '@tiptap/extension-table'
+import { Button } from '~/components/ui/button'
 
 interface Note {
   title: string
@@ -50,10 +51,13 @@ export default function ComposePage() {
     >
       <Splitter.Panel id="f" class={clsx(splitterStyles.Panel, 'w-full')}>
         <div
-          class="h-3rem p-4 font-700 flex items-center"
+          class="h-3rem p-4 font-700 flex justify-between items-center"
           style={{ 'border-bottom': '1px solid var(--color-border)' }}
         >
-          Folders
+          <span>Folders</span>{' '}
+          <Button size="icon" variant="ghost">
+            <div class="i-ri-folder-add-line w-4 h-4" />
+          </Button>
         </div>
         <ScrollArea.Root
           class={clsx(scrollStyles.Root, 'w-full')}
@@ -86,10 +90,13 @@ export default function ComposePage() {
 
       <Splitter.Panel id="n" class={clsx(splitterStyles.Panel, 'w-full')}>
         <div
-          class="h-3rem p-4 font-700 flex items-center"
+          class="h-3rem p-4 font-700 flex justify-between items-center"
           style={{ 'border-bottom': '1px solid var(--color-border)' }}
         >
-          Notes
+          <span>Notes</span>{' '}
+          <Button size="icon" variant="ghost">
+            <div class="i-ri-edit-box-line w-4 h-4" />
+          </Button>
         </div>
         <ScrollArea.Root
           class={clsx(scrollStyles.Root, 'w-full')}

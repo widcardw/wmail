@@ -54,7 +54,11 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       isBulletList: editor?.isActive('bulletList'),
       isOrderedList: editor?.isActive('orderedList'),
       isCodeBlock: editor?.isActive('codeBlock'),
+      canCodeBlock:
+        editor?.can().chain().focus().setCodeBlock().run() || editor?.isActive('codeBlock'),
       isBlockquote: editor?.isActive('blockquote'),
+      canBlockquote:
+        editor?.can().chain().focus().setBlockquote().run() || editor?.isActive('blockquote'),
       canUndo: editor?.can().chain().focus().undo().run(),
       canRedo: editor?.can().chain().focus().redo().run(),
     }),
@@ -350,6 +354,7 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       </Menu.Root>
       <Toggle.Root
         pressed={state().isCodeBlock}
+        disabled={!state().canCodeBlock}
         onPressedChange={() => props.editor!.chain().focus().toggleCodeBlock().run()}
         title="Code Block"
         class={toggleStyles.Root}
@@ -358,6 +363,7 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       </Toggle.Root>
       <Toggle.Root
         pressed={state().isBlockquote}
+        disabled={!state().canBlockquote}
         onPressedChange={() => props.editor!.chain().focus().toggleBlockquote().run()}
         title="Block Quote"
         class={toggleStyles.Root}
