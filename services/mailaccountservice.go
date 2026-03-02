@@ -143,6 +143,15 @@ func (s *MailAccountService) AddAccount(account *Account) (*Account, error) {
 
 	s.accountsMutex.Lock()
 	s.accounts[account.ID] = account
+	
+	if len(account.Folders) == 0 {
+		f, err := s.fetchFoldersForAccount(account); 
+		if err != nil {
+			return nil, err
+		}
+		s.accounts[account.ID].Folders = f
+	}
+	
 	err := s.saveAccounts()
 	s.accountsMutex.Unlock()
 

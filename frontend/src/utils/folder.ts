@@ -31,7 +31,7 @@ const MAPPING = {
     name: 'Trash',
     icon: 'i-ri-delete-bin-line',
     path: 'trash',
-    alias: ['trash', 'deleted', 'deletions', '删除', '回收站', 'bin'],
+    alias: ['trash', 'deleted', 'deletions', '删除', '已删除', '回收站', 'bin'],
   },
   other: {
     name: '$1',

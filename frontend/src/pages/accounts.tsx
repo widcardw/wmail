@@ -97,7 +97,7 @@ export default function AccountPage() {
           ...formData,
         })
       } else {
-        await mailStore.addAccount({ ...formData })
+        await mailStore.addAccount({ ...formData, folders: [] })
       }
       toaster.success({
         title: `Successfully added account ${formData.email}`,
@@ -336,6 +336,7 @@ export default function AccountPage() {
                 <Dialog.CloseTrigger
                   class={buttonStyles.Root}
                   data-variant="solid"
+                  disabled={mailStore.state.loading}
                   onClick={handleSubmit}
                 >
                   Accept
