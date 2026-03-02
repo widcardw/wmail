@@ -11,15 +11,20 @@ import toggleStyles from "~/components/ui/toggle/index.module.css";
 import { Button } from "../button";
 
 const HEAD_MAP = {
-  'p': 'i-ri-paragraph',
-  'h1': 'i-lucide-heading-1',
-  'h2': 'i-lucide-heading-2',
-  'h3': 'i-lucide-heading-3',
-  'h4': 'i-lucide-heading-4',
-  'h5': 'i-lucide-heading-5',
-  'h6': 'i-lucide-heading-6',
-  'null': 'i-ri-close-fill',
-}
+  p: "i-ri-paragraph",
+  h1: "i-lucide-heading-1",
+  h2: "i-lucide-heading-2",
+  h3: "i-lucide-heading-3",
+  h4: "i-lucide-heading-4",
+  h5: "i-lucide-heading-5",
+  h6: "i-lucide-heading-6",
+  null: "i-ri-close-fill",
+};
+
+const LIST_MAP = {
+  bulletlist: "i-ri-list-check",
+  orderedlist: "i-ri-list-ordered-2",
+};
 
 const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
   if (!props.editor) {
@@ -70,8 +75,16 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
                 ? "h5"
                 : state().isHeading6
                   ? "h6"
-                  : 'null';
+                  : "null";
   });
+
+  const listState = createMemo(() =>
+    state().isBulletList
+      ? "bulletlist"
+      : state().isOrderedList
+        ? "orderedlist"
+        : "bulletlist",
+  );
 
   return (
     <div
@@ -166,7 +179,7 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
       />
       <Menu.Root>
         <Menu.Trigger class={menuStyles.Trigger} title="Heading">
-          <div class={clsx('w-4 h-4', HEAD_MAP[headState()!])} />
+          <div class={clsx("w-4 h-4", HEAD_MAP[headState()!])} />
           <Menu.Indicator class={menuStyles.Indicator}>
             <div class="i-ri-arrow-down-s-line" />
           </Menu.Indicator>
@@ -176,48 +189,223 @@ const EditorMenubar: Component<{ editor?: Editor }> = (props) => {
             <Menu.Arrow class={menuStyles.Arrow}>
               <Menu.ArrowTip class={menuStyles.ArrowTip} />
             </Menu.Arrow>
-            <Menu.Item class={menuStyles.Item} value="p" onClick={() => props.editor!.chain().focus().setParagraph().run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="p"
+              onClick={() => props.editor!.chain().focus().setParagraph().run()}
+            >
               <div class="i-ri-paragraph w-4 h-4" /> Paragraph
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h1" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 1 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h1"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 1 }).run()
+              }
+            >
               <div class="i-lucide-heading-1 w-4 h-4" /> Heading 1
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h2" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 2 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h2"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+            >
               <div class="i-lucide-heading-2 w-4 h-4" /> Heading 2
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h3" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 3 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h3"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 3 }).run()
+              }
+            >
               <div class="i-lucide-heading-3 w-4 h-4" /> Heading 3
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h4" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 4 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h4"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 4 }).run()
+              }
+            >
               <div class="i-lucide-heading-4 w-4 h-4" /> Heading 4
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h5" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 5 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h5"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 5 }).run()
+              }
+            >
               <div class="i-lucide-heading-5 w-4 h-4" /> Heading 5
             </Menu.Item>
-            <Menu.Item class={menuStyles.Item} value="h6" onClick={() => props.editor!.chain().focus().toggleHeading({ level: 6 }).run()}>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h6"
+              onClick={() =>
+                props.editor!.chain().focus().toggleHeading({ level: 6 }).run()
+              }
+            >
               <div class="i-lucide-heading-6 w-4 h-4" /> Heading 6
             </Menu.Item>
           </Menu.Content>
         </Menu.Positioner>
       </Menu.Root>
-      <Button
-        variant="ghost"
-        size="icon"
-        title="Bullet List"
-        onClick={() => props.editor!.chain().focus().toggleBulletList().run()}
-        class={clsx(state().isBulletList && "is-active")}
-      >
-        <div class="i-ri-list-check w-4 h-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        title="Ordered List"
-        onClick={() => props.editor!.chain().focus().toggleOrderedList().run()}
-        class={clsx(state().isOrderedList && "is-active")}
-      >
-        <div class="i-ri-list-ordered-2 w-4 h-4" />
-      </Button>
+      <Menu.Root>
+        <Menu.Trigger class={menuStyles.Trigger} title="List">
+          <div class={clsx("w-4 h-4", LIST_MAP[listState()])} />
+          <Menu.Indicator class={menuStyles.Indicator}>
+            <div class="i-ri-arrow-down-s-line" />
+          </Menu.Indicator>
+        </Menu.Trigger>
+        <Menu.Positioner>
+          <Menu.Content class={menuStyles.Content}>
+            <Menu.Arrow class={menuStyles.Arrow}>
+              <Menu.ArrowTip class={menuStyles.ArrowTip} />
+            </Menu.Arrow>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="p"
+              onClick={() =>
+                props.editor!.chain().focus().toggleBulletList().run()
+              }
+            >
+              <div class="i-ri-list-check w-4 h-4" /> Bullet List
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="h1"
+              onClick={() =>
+                props.editor!.chain().focus().toggleOrderedList().run()
+              }
+            >
+              <div class="i-ri-list-ordered-2 w-4 h-4" /> Ordered List
+            </Menu.Item>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Menu.Root>
+      <Menu.Root>
+        <Menu.Trigger class={menuStyles.Trigger} title="Table">
+          <div class={clsx("w-4 h-4", "i-ri-table-2")} />
+          <Menu.Indicator class={menuStyles.Indicator}>
+            <div class="i-ri-arrow-down-s-line" />
+          </Menu.Indicator>
+        </Menu.Trigger>
+        <Menu.Positioner>
+          <Menu.Content class={menuStyles.Content}>
+            <Menu.Arrow class={menuStyles.Arrow}>
+              <Menu.ArrowTip class={menuStyles.ArrowTip} />
+            </Menu.Arrow>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="insert-table"
+              onClick={() =>
+                props
+                  .editor!.chain()
+                  .focus()
+                  .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+                  .run()
+              }
+            >
+              <div class="i-ri-table-2 w-4 h-4" /> Insert Table
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="delete-table"
+              onClick={() =>
+                props.editor!.chain().focus().deleteTable().run()
+              }
+            >
+              <div class="i-ri-delete-bin-line w-4 h-4" /> Delete Table
+            </Menu.Item>
+            <Menu.Separator class={menuStyles.Separator} />
+            <Menu.Item
+              class={menuStyles.Item}
+              value="insert-col-before"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().addColumnBefore().run()
+              }
+            >
+              <div class="i-ri-insert-column-left w-4 h-4" /> Insert Column Before
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="insert-col-after"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().addColumnBefore().run()
+              }
+            >
+              <div class="i-ri-insert-column-right w-4 h-4" /> Insert Column After
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="del-col"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().deleteColumn().run()
+              }
+            >
+              <div class="i-ri-delete-column w-4 h-4" /> Delete Column
+            </Menu.Item>
+            <Menu.Separator class={menuStyles.Separator} />
+            <Menu.Item
+              class={menuStyles.Item}
+              value="insert-row-before"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().addRowBefore().run()
+              }
+            >
+              <div class="i-ri-insert-row-top w-4 h-4" /> Insert Row Before
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="insert-row-after"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().addRowAfter().run()
+              }
+            >
+              <div class="i-ri-insert-row-bottom w-4 h-4" /> Insert Row After
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="del-row"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().deleteRow().run()
+              }
+            >
+              <div class="i-ri-delete-row w-4 h-4" /> Delete Row
+            </Menu.Item>
+            <Menu.Separator class={menuStyles.Separator} />
+            <Menu.Item
+              class={menuStyles.Item}
+              value="merge-cells"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().mergeCells().run()
+              }
+            >
+              <div class="i-ri-merge-cells-horizontal w-4 h-4" /> Merge Cells
+            </Menu.Item>
+            <Menu.Item
+              class={menuStyles.Item}
+              value="split-cells"
+              onClick={() =>
+                props
+                  .editor!.chain().focus().addRowAfter().run()
+              }
+            >
+              <div class="i-ri-split-cells-horizontal w-4 h-4" /> Split Cells
+            </Menu.Item>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Menu.Root>
       <Toggle.Root
         pressed={state().isCodeBlock}
         onPressedChange={() =>

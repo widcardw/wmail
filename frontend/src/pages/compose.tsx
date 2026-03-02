@@ -10,6 +10,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { TextStyleKit } from '@tiptap/extension-text-style'
 import '~/components/ui/editor/editor.scss'
 import EditorMenubar from '~/components/ui/editor/menubar'
+import { TableKit } from '@tiptap/extension-table'
 
 interface Note {
   title: string
@@ -34,7 +35,7 @@ export default function ComposePage() {
 
   const tiptapEditor = createTiptapEditor(() => ({
     element: editor()!,
-    extensions: [TextStyleKit, StarterKit],
+    extensions: [TextStyleKit, StarterKit, TableKit],
   }))
 
   return (
