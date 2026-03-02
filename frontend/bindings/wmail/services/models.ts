@@ -198,6 +198,130 @@ export class Folder {
 }
 
 /**
+ * Note represents a note with TipTap content
+ */
+export class Note {
+    "id": string;
+    "title": string;
+
+    /**
+     * TipTap JSON content
+     */
+    "content": string;
+
+    /**
+     * Short preview text
+     */
+    "preview": string;
+    "createdAt": string;
+    "updatedAt": string;
+
+    /**
+     * Folder name this note belongs to
+     */
+    "folder": string;
+
+    /** Creates a new Note instance. */
+    constructor($$source: Partial<Note> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
+        if (!("title" in $$source)) {
+            this["title"] = "";
+        }
+        if (!("content" in $$source)) {
+            this["content"] = "";
+        }
+        if (!("preview" in $$source)) {
+            this["preview"] = "";
+        }
+        if (!("createdAt" in $$source)) {
+            this["createdAt"] = "";
+        }
+        if (!("updatedAt" in $$source)) {
+            this["updatedAt"] = "";
+        }
+        if (!("folder" in $$source)) {
+            this["folder"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Note instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Note {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new Note($$parsedSource as Partial<Note>);
+    }
+}
+
+/**
+ * NoteConfig represents the notes configuration
+ */
+export class NoteConfig {
+    "defaultDir": string;
+
+    /** Creates a new NoteConfig instance. */
+    constructor($$source: Partial<NoteConfig> = {}) {
+        if (!("defaultDir" in $$source)) {
+            this["defaultDir"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new NoteConfig instance from a string or object.
+     */
+    static createFrom($$source: any = {}): NoteConfig {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new NoteConfig($$parsedSource as Partial<NoteConfig>);
+    }
+}
+
+/**
+ * NoteFolder represents a folder containing notes
+ */
+export class NoteFolder {
+    "name": string;
+
+    /**
+     * Full path to the folder
+     */
+    "path": string;
+    "createdAt": string;
+    "updatedAt": string;
+
+    /** Creates a new NoteFolder instance. */
+    constructor($$source: Partial<NoteFolder> = {}) {
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("path" in $$source)) {
+            this["path"] = "";
+        }
+        if (!("createdAt" in $$source)) {
+            this["createdAt"] = "";
+        }
+        if (!("updatedAt" in $$source)) {
+            this["updatedAt"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new NoteFolder instance from a string or object.
+     */
+    static createFrom($$source: any = {}): NoteFolder {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new NoteFolder($$parsedSource as Partial<NoteFolder>);
+    }
+}
+
+/**
  * SendEmail sends an email
  */
 export class SendEmailRequest {

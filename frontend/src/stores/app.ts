@@ -2,6 +2,11 @@ import { createStore } from 'solid-js/store'
 
 class AppConfig {
   theme = 'auto'
+  notesConfig: {
+    defaultDir: string
+  } = {
+    defaultDir: '',
+  }
   constructor(source = {}) {
     Object.assign(this, source)
   }
@@ -12,6 +17,9 @@ class AppConfig {
 
 const [configStore, setConfigStore] = createStore<AppConfig>({
   theme: 'auto',
+  notesConfig: {
+    defaultDir: '',
+  },
 })
 
 export { configStore, setConfigStore }

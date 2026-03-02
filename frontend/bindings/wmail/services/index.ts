@@ -4,11 +4,13 @@
 import * as GreetService from "./greetservice.js";
 import * as MailAccountService from "./mailaccountservice.js";
 import * as MailService from "./mailservice.js";
+import * as NoteService from "./noteservice.js";
 import * as OsService from "./osservice.js";
 export {
     GreetService,
     MailAccountService,
     MailService,
+    NoteService,
     OsService
 };
 
@@ -16,5 +18,8 @@ export {
     Account,
     Email,
     Folder,
+    Note,
+    NoteConfig,
+    NoteFolder,
     SendEmailRequest
 } from "./models.js";

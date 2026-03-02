@@ -30,6 +30,7 @@ func main() {
 	// Initialize services
 	accountService := services.NewMailAccountService()
 	mailService := services.NewMailService(accountService)
+	noteService := services.NewNoteService()
 
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
@@ -44,6 +45,7 @@ func main() {
 			application.NewService(&services.OsService{}),
 			application.NewService(accountService),
 			application.NewService(mailService),
+			application.NewService(noteService),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
