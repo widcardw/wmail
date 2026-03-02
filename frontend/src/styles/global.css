@@ -35,6 +35,7 @@
   --color-destructive-fg: #ffffff;
 
   --color-border: #292934;
+  --color-code-bg: #242424;
   --color-muted-foreground: #a1a1aa;
   --color-muted-fg2: #777;
 
@@ -51,6 +52,7 @@ html.light {
   --color-mut: #c0c0c0;
   --color-border: #e0e0e0;
   --color-muted-foreground: #555;
+  --color-code-bg: #efefef;
 }
 
 code,

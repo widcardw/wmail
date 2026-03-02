@@ -23,6 +23,7 @@ const Button: Component<{
   onClick?: (args: unknown) => unknown
   children?: JSXElement
   class?: string
+  title?: string
 }> = (props) => {
   const p = mergeProps(
     {
@@ -32,6 +33,7 @@ const Button: Component<{
       disabled: false,
       size: 'default',
       class: '',
+      title: '',
     },
     props,
   )
@@ -48,6 +50,7 @@ const Button: Component<{
         'font-sans',
         p.class,
       )}
+      title={p.title}
       onClick={p.onClick}
     >
       {p.children}

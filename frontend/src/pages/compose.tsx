@@ -1,6 +1,6 @@
 import { ScrollArea, Splitter } from '@ark-ui/solid'
 import clsx from 'clsx'
-import { createSignal, For, onMount, Show } from 'solid-js'
+import { createSignal, For, Show } from 'solid-js'
 import splitterStyles from '~/components/ui/splitter/index.module.css'
 import scrollStyles from '~/components/ui/scroll_area/index.module.css'
 import { formatDate } from '~/utils/date'

@@ -61,7 +61,7 @@ func main() {
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title: "w-mail",
 		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
+			InvisibleTitleBarHeight: 40,
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
@@ -69,6 +69,8 @@ func main() {
 		URL:              "/",
 		MinWidth:         1024,
 		MinHeight:        768,
+		Width: 1024,
+		Height: 768,
 	})
 
 	// Run the application. This blocks until the application has been exited.
